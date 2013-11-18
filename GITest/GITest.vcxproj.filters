@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{532d82c3-b4a6-47b7-85b9-8d4a7f2cf4fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{b17f4c50-f65a-4ebc-8ffd-7e15e49010f5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IGLUApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneHelper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VFCIGLUApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IntersectionInfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BVHFlatNodeVector.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BBoxVector.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleVector.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GIMApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="IGLUApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneHelper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GITest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VFCIGLUApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BVH.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BBox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GIMApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Debug\shaders\object.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\object.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\test.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\test.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\toArray.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\toArray.geom.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\toArray.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\cornell.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="Debug\shaders\cull.gs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\cull.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\normal.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\normal.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\nature.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="Debug\shaders\normalT.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\normalT.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\normalU.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\normalU.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\sponza.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="Debug\shaders\stencilBuilding.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\stencilBuilding.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\cityIsland.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="Debug\shaders\gi.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\gi.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\mirrorTexture.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\mirrorTexture.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Debug\shaders\stencilBuilding.geom.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

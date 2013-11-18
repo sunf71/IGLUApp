@@ -1,0 +1,39 @@
+#
+## Alias OBJ Material File
+# Hand coded as sample for IGLU for SimpleDrawCornellBox6 Example
+
+newmtl skyboxBack
+Ka 0.00 0.00 0.00
+Kd 1 1 1
+Ks 0.00 0.00 0.00
+map_Kd ../../CommonSampleFiles/images/skyboxBack.bmp
+
+newmtl skyboxLeft
+Ka 0.00 0.00 0.00
+Kd 1 1 1
+Ks 0.00 0.00 0.00
+map_Kd ../../CommonSampleFiles/images/skyboxLeft.bmp
+
+newmtl skyboxTop
+Ka 0.00 0.00 0.00
+Kd 1 1 1
+Ks 0.00 0.00 0.00
+map_Kd ../../CommonSampleFiles/images/skyboxTop.bmp
+
+newmtl skyboxRight
+Ka 0.00 0.00 0.00
+Kd 1 1 1
+Ks 0.00 0.00 0.00
+map_Kd ../../CommonSampleFiles/images/skyboxRight.bmp
+
+newmtl skyboxBottom
+Ka 0.00 0.00 0.00
+Kd 1 1 1
+Ks 0.00 0.00 0.00
+map_Kd ../../CommonSampleFiles/images/skyboxBottom.bmp
+
+newmtl skyboxFront
+Ka 0.00 0.00 0.00
+Kd 1 1 1
+Ks 0.00 0.00 0.00
+map_Kd ../../CommonSampleFiles/images/skyboxFront.bmp

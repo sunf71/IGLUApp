@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjLoadTest", "IGLUApp\IGLUApp.vcxproj", "{50EBBE6B-EACF-4CDF-9B22-D4715CC7488B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TessellationShader", "TesselationShader\TesselationShader.vcxproj", "{0FF0E917-43BB-4C9D-82E5-9BB477A0DB34}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TransformFeedback", "TransformFeedback\TransformFeedback.vcxproj", "{94B1A25E-1B03-4B82-A81D-6363D103E32B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IGLUAppTest", "IGLUAppTest\IGLUAppTest.vcxproj", "{9C9B27C0-F734-4510-BBCC-82492FD9F785}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GITest", "GITest\GITest.vcxproj", "{94B95987-A008-49E2-A702-E08C8F0FAFC1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50EBBE6B-EACF-4CDF-9B22-D4715CC7488B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{50EBBE6B-EACF-4CDF-9B22-D4715CC7488B}.Debug|Win32.Build.0 = Debug|Win32
+		{50EBBE6B-EACF-4CDF-9B22-D4715CC7488B}.Release|Win32.ActiveCfg = Release|Win32
+		{50EBBE6B-EACF-4CDF-9B22-D4715CC7488B}.Release|Win32.Build.0 = Release|Win32
+		{0FF0E917-43BB-4C9D-82E5-9BB477A0DB34}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0FF0E917-43BB-4C9D-82E5-9BB477A0DB34}.Debug|Win32.Build.0 = Debug|Win32
+		{0FF0E917-43BB-4C9D-82E5-9BB477A0DB34}.Release|Win32.ActiveCfg = Release|Win32
+		{0FF0E917-43BB-4C9D-82E5-9BB477A0DB34}.Release|Win32.Build.0 = Release|Win32
+		{94B1A25E-1B03-4B82-A81D-6363D103E32B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{94B1A25E-1B03-4B82-A81D-6363D103E32B}.Debug|Win32.Build.0 = Debug|Win32
+		{94B1A25E-1B03-4B82-A81D-6363D103E32B}.Release|Win32.ActiveCfg = Release|Win32
+		{94B1A25E-1B03-4B82-A81D-6363D103E32B}.Release|Win32.Build.0 = Release|Win32
+		{9C9B27C0-F734-4510-BBCC-82492FD9F785}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9C9B27C0-F734-4510-BBCC-82492FD9F785}.Debug|Win32.Build.0 = Debug|Win32
+		{9C9B27C0-F734-4510-BBCC-82492FD9F785}.Release|Win32.ActiveCfg = Release|Win32
+		{9C9B27C0-F734-4510-BBCC-82492FD9F785}.Release|Win32.Build.0 = Release|Win32
+		{94B95987-A008-49E2-A702-E08C8F0FAFC1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{94B95987-A008-49E2-A702-E08C8F0FAFC1}.Debug|Win32.Build.0 = Debug|Win32
+		{94B95987-A008-49E2-A702-E08C8F0FAFC1}.Release|Win32.ActiveCfg = Release|Win32
+		{94B95987-A008-49E2-A702-E08C8F0FAFC1}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,75 @@
+# Setup a camera to view the scene
+camera pinhole
+     eye 0 0 0
+   	 up 0 1 0
+     at 0 0 -11
+	  fovy 38.5
+	  near 5.5
+	  far  16.0
+	  res 512 512
+	  trackball
+end
+
+
+light point
+	pos    4.3 5.38 3.795
+	at     2.78 0.53 2.795
+	color  1.0 1.0 1.0
+	#near 0.1
+	#far 10.0
+	#trackball 0
+end
+
+
+object plane floor
+	anchor 0.0f 0.0f 0.0f
+	v1  0.0f 0.0f 5.592f
+	v2 5.560f 0.0f 0.0f
+	material white
+end	 
+
+object plane ceiling
+	anchor 0.0f 5.488f 0.0f
+	v1 5.560f 0.0f 0.0f
+	v2 0.0f 0.0f 5.592f
+	material green	
+end	
+
+object plane back
+	anchor 0.0f 0.0f 5.592f
+	v1 0.0f 5.488f 0.0f
+	v2 5.560f 0.0f 0.0f
+	material white
+	
+end	
+object plane right
+	anchor  0.0f 0.0f 0.0f 
+	v1 0.0f 5.488f 0.0f 
+	v2 0.0f 0.0f 5.592 
+	material green	
+end	
+
+object plane left
+	anchor  5.560 0.0 0.0f
+	v1 0.0f 0.0f 5.592f 
+	v2 0.0f 5.488f 0.0f
+	material red	
+end	
+
+object mesh obj sphere
+		file models/sphere.obj	
+		matrix translate 2.25 2.5 2
+		#matrix translate 0 1.5 0
+		matrix scale 0.5 0.5 0.5	
+		#matrix rotate 45  0 1 0	
+		material mirror
+end
+
+object mesh obj bunny
+		file models/bunny-20000-bronze.obj	
+		matrix translate 3.5 2.5 2
+		#matrix translate 0 1.5 0
+		matrix scale 5 5 5	
+		matrix rotate 180  0 1 0	
+		#material mirror
+end
