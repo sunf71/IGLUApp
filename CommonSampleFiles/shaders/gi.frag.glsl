@@ -2,28 +2,52 @@
 
 uniform mat4 view; 
 uniform float lightIntensity;
-
+uniform vec3 lightPos;
+uniform vec3 lightColor;
 uniform samplerBuffer  matlInfoTex;
 uniform sampler2DArray matlTextures;
-uniform vec3 lightColor;
-uniform vec3 lightPos;
+uniform float resX;
+uniform float resY;
 in vec4  esNormal;
 in vec4  esPosition;
 in vec2  fragTexCoord;
 in float fragMatlID;
 
+
+uniform sampler2D   stencilTexture;
+in float instanceId;
+in vec4 esMirror;
+in vec4 esMirrorNormal;
+in float discardFlag;
+
 out vec4 result;
 
-//const vec3 wslightPos = vec3( 2.13, 5.487, 2.27 );
-//const vec3 lightColor = vec3( 1.0, 0.85, 0.43); vec3( 18.4, 15.6, 8.0 );
-
-// This is the actual code that is executed.
 void main( void )
 {
+	vec2 fragCorrd = vec2((gl_FragCoord.x)/resX,(gl_FragCoord.y)/resY);
+	
+	//float dir = dot(esPosition-esMirror,esMirrorNormal);	
+	
+	//蒙版测试
+	float id=texture( stencilTexture, fragCorrd).x- 1.0;	
+	if(abs(id-instanceId)>0.01)
+	{	
+		discard;		
+	}
+	//镜面在顶点前面
+	if (discardFlag < 0)
+		discard;
+
 	// Look up data about this particular fragment's material
+	vec4 matlInfo = vec4(1.0);
+	vec4 matlTexIds = vec4(-1.0);
 	int matlIdx     = 4 * int(fragMatlID+0.5);
-	vec4 matlInfo   = texelFetch( matlInfoTex, matlIdx+1 );  // Get diffuse color
-	vec4 matlTexIds = texelFetch( matlInfoTex, matlIdx+3 );  // Get matl texture IDs
+	if (matlIdx > 0)
+	{
+		matlInfo   = texelFetch( matlInfoTex, matlIdx+1 );  // Get diffuse color
+		matlTexIds = texelFetch( matlInfoTex, matlIdx+3 );  // Get matl texture IDs
+
+	}
 	
 	// Look up this particular fragments' diffuse texture color
 	vec4 difTexColor = vec4(1.0);
@@ -41,4 +65,5 @@ void main( void )
 	// Compute a simple diffuse shading
 	float NdotL  =  clamp(dot(toEye,esNorm),0,1)+1;
 	result = vec4( NdotL * lightIntensity * lightColor * matlInfo.xyz * difTexColor.xyz, 1.0 );
+
 }

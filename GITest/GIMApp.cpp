@@ -207,14 +207,14 @@ int GIMApp::UpdateMirrorVAO()
 
 void GIMApp::InitShaders()
 {
-	_objShader = new IGLUShaderProgram("shaders/object.vert.glsl","shaders/object.frag.glsl");
+	_objShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/object.vert.glsl","../../CommonSampleFiles/shaders/object.frag.glsl");
 	_objShader->SetProgramEnables( IGLU_GLSL_DEPTH_TEST | IGLU_GLSL_BLEND); 
 
-	_mirrorShader = new IGLUShaderProgram("shaders/stencilBuilding.vert.glsl","shaders/stencilBuilding.geom.glsl","shaders/stencilBuilding.frag.glsl");
+	_mirrorShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/stencilBuilding.vert.glsl","../../CommonSampleFiles/shaders/stencilBuilding.geom.glsl","../../CommonSampleFiles/shaders/stencilBuilding.frag.glsl");
 
-	_giShader = new IGLUShaderProgram("shaders/gi.vert.glsl","shaders/gi.frag.glsl");
+	_giShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/gi.vert.glsl","../../CommonSampleFiles/shaders/gi.frag.glsl");
 
-	_mirrorTexShader = new IGLUShaderProgram("shaders/mirrorTexture.vert.glsl","shaders/mirrorTexture.frag.glsl");
+	_mirrorTexShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/mirrorTexture.vert.glsl","../../CommonSampleFiles/shaders/mirrorTexture.frag.glsl");
 }
 
 void GIMApp::Display()
