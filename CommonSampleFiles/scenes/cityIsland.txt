@@ -1,0 +1,57 @@
+
+
+# Setup a camera to view the scene
+camera pinhole
+	eye 0 0 10
+	at 0 0 0
+      up 0 1 0    
+	  fovy 38.5
+	  near 0.1
+	  far  200.0
+	  res 1024 1024
+end
+
+light point
+	pos 10 10 0
+   at 0.78 0.73 -0
+ 	color  1 0.85 0.43
+	near   1.0
+	far    25
+end
+
+
+
+
+
+object mesh obj car
+			file ../../CommonSampleFiles/models/Lincoln.obj			
+		matrix translate -0.9 0.5 0;  
+end
+#object mesh obj bunny
+#			file ../../CommonSampleFiles/models/cow.obj			
+#			matrix translate 0 0 0
+#			#matrix scale 2 2 2	
+#			#matrix rotate 180 0 1 0			   
+#end
+
+#object mesh obj CityIslands  
+			#file ../../CommonSampleFiles/models/City_Islands.obj
+ #           file ../../CommonSampleFiles/models/cube.obj			
+#			matrix translate 1 0 0
+			#matrix scale 110 110 110		  
+#end
+object mesh obj mirror   
+			file ../../CommonSampleFiles/models/sphere544.obj					
+			 matrix translate 0 1.07 2
+	         matrix scale 0.2 0.2 0.2
+			#matrix scale 3 6 3		
+			material mirror
+end
+
+object mesh obj skybox	   
+			file ../../CommonSampleFiles/models/skybox.obj			
+		    #matrix translate 0 20 14
+			matrix scale 100 100 100		  
+end
+
+

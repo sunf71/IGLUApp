@@ -105,6 +105,14 @@ public:
 	{
 		return _resY;
 	}
+	vec3 GetAt()
+	{
+		return _at;
+	}
+	vec3 GetEye()
+	{
+		return _eye;
+	}
 private:
 
 	vec3 _eye, _at, _up;

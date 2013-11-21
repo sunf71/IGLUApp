@@ -14,7 +14,8 @@ layout(location = IGLU_VERTEX)   in vec3 VertexPosition;   // Sends vertex data 
 layout(location = IGLU_NORMAL)   in vec3 VertexNormal;   // Sends normal data (if any) from models here
 layout(location = IGLU_TEXCOORD) in vec2 VertexTexCoord; // Sends texture coordinate data (if any) from models here
 layout(location = IGLU_MATL_ID)  in float matlID;  // Sends ID for current material from model (if any)
-layout(location = 4)   in vec4 InstancePosition;  // instance position
+layout(location = 5)   in vec4 InstancePosition;  // instance position
+layout(location = 6)   in vec4 InstanceNormal;  // instance normal
 //in vec3 VertexPosition;
 //in vec3 VertexNormal;
 //in vec2 VertexTexCoord;

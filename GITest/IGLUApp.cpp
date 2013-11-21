@@ -76,7 +76,7 @@ void IGLUApp::InitWindow(const char *title,int width, int height)
 	
 
 	_win = new IGLUWindow( _winWidth, _winHeight, title );
-	_win->SetWindowProperties( IGLU_WINDOW_NO_RESIZE |	
+	_win->SetWindowProperties( 	
 								IGLU_WINDOW_DOUBLE |
 								IGLU_WINDOW_REDRAW_ON_IDLE								
 								); 

@@ -1,16 +1,13 @@
 #include "IGLUApp.h"
 #include "VFCIGLUApp.h"
 #include "GIMApp.h"
+#include "TestApp.h"
 #include "igluRandom.h"
 #include <gl/gl.h>
 #include "Sphere.h"
 #define NUM_TREES				10000
 #define NUM_GRASS				40*40
-struct InstanceData
-{
-	vec4 position;
-	//vec4 normal;
-};
+
 
 
 class GITestApp : public IGLUApp
@@ -110,6 +107,7 @@ private:
 		for (int i=0; i<size; i++) {
 			for (int j=0; j<size; j++) {
 				_instanceData[i+j*size].position = vec4( (i-size/2)*4.0f+random(-0.05,0.05), -5.5f, (j-size/2)*4.0f+random(-0.05,0.05), 0.0f );
+				_instanceData[i+j*size].normal = vec4(1,0,0,0);
 				}
 		}
 		InitIGLUBuffer();
@@ -134,14 +132,14 @@ public:
 	}
 	virtual void InitShaders()
 	{
-		IGLUShaderProgram::Ptr giShader = new IGLUShaderProgram("shaders/normal.vs","shaders/normal.fs");
+		IGLUShaderProgram::Ptr giShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/normal.vs","../../CommonSampleFiles/shaders/normal.fs");
 		_shaders.push_back(giShader);
-		IGLUShaderProgram::Ptr shader = new IGLUShaderProgram("shaders/normalT.vs","shaders/normalT.fs");
+		IGLUShaderProgram::Ptr shader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/normalT.vs","../../CommonSampleFiles/shaders/normalT.fs");
 		_shaders.push_back(shader);
-		IGLUShaderProgram::Ptr Ushader = new IGLUShaderProgram("shaders/normalU.vs","shaders/normalU.fs");
+		IGLUShaderProgram::Ptr Ushader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/normalU.vs","../../CommonSampleFiles/shaders/normalU.fs");
 		_shaders.push_back(Ushader);
 
-		_shaders.push_back(new IGLUShaderProgram("shaders/cull.vs","shaders/cull.gs",NULL));
+		_shaders.push_back(new IGLUShaderProgram("../../CommonSampleFiles/shaders/cull.vs","../../CommonSampleFiles/shaders/cull.gs",NULL));
 	}
 	virtual ~GITestApp()
 	{
@@ -298,10 +296,11 @@ void Test()
 IGLUApp* app;
 void main()
 {
-	
+	app = new GITestApp("../../CommonSampleFiles/scenes/nature.txt");
 
-	//app= new IGLUApp("cityIsland.txt");	
-	app= new GIMApp("cityIsland.txt");	
+	//app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
+	//app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
+	//app= new TestApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app = new VFCIGLUApp("sponza.txt");
 	//GLint  value;
 	//glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE,&value);

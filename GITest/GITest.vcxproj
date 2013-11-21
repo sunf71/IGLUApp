@@ -93,6 +93,7 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="SceneHelper.h" />
     <ClInclude Include="Sphere.h" />
+    <ClInclude Include="TestApp.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="TriangleVector.hpp" />
     <ClInclude Include="Vector3.h" />
@@ -103,16 +104,23 @@
     <ClCompile Include="BBox.cpp" />
     <ClCompile Include="BVH.cpp" />
     <ClCompile Include="GIMApp.cpp" />
+    <ClCompile Include="TestApp.cpp" />
     <ClCompile Include="VFCIGLUApp.cpp" />
     <ClCompile Include="GITest.cpp" />
     <ClCompile Include="IGLUApp.cpp" />
     <ClCompile Include="SceneHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\CommonSampleFiles\scenes\cityIsland.txt" />
+    <None Include="..\CommonSampleFiles\scenes\cornell.txt" />
+    <None Include="..\CommonSampleFiles\scenes\nature.txt" />
+    <None Include="..\CommonSampleFiles\scenes\sponza.txt" />
     <None Include="..\CommonSampleFiles\shaders\cull.gs" />
     <None Include="..\CommonSampleFiles\shaders\cull.vs" />
     <None Include="..\CommonSampleFiles\shaders\gi.frag.glsl" />
     <None Include="..\CommonSampleFiles\shaders\gi.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\giU.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\giVA.vert.glsl" />
     <None Include="..\CommonSampleFiles\shaders\mirrorTexture.frag.glsl" />
     <None Include="..\CommonSampleFiles\shaders\mirrorTexture.vert.glsl" />
     <None Include="..\CommonSampleFiles\shaders\normal.fs" />
@@ -124,19 +132,17 @@
     <None Include="..\CommonSampleFiles\shaders\object.frag.glsl" />
     <None Include="..\CommonSampleFiles\shaders\object.vert.glsl" />
     <None Include="..\CommonSampleFiles\shaders\stencilBuilding.frag.glsl" />
-    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.fragO.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\stencilBuildingO.frag.glsl" />
     <None Include="..\CommonSampleFiles\shaders\stencilBuilding.geom.glsl" />
     <None Include="..\CommonSampleFiles\shaders\stencilBuilding.vert.glsl" />
-    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.vertO.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\stencilBuildingO.vert.glsl" />
     <None Include="..\CommonSampleFiles\shaders\test.frag.glsl" />
     <None Include="..\CommonSampleFiles\shaders\test.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\testm.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\testm.vert.glsl" />
     <None Include="..\CommonSampleFiles\shaders\toArray.frag.glsl" />
     <None Include="..\CommonSampleFiles\shaders\toArray.geom.glsl" />
     <None Include="..\CommonSampleFiles\shaders\toArray.vert.glsl" />
-    <None Include="Debug\cityIsland.txt" />
-    <None Include="Debug\cornell.txt" />
-    <None Include="Debug\nature.txt" />
-    <None Include="Debug\sponza.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

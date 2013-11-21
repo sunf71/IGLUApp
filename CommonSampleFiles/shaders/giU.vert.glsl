@@ -9,13 +9,19 @@ layout(location = IGLU_MATL_ID)  in float matlID;  // Sends ID for current mater
 uniform mat4 project;             // The projection/perspective matrix
 uniform mat4 model;               // The model matrix
 uniform mat4 view;                // The view matrix
-uniform mat4 mirrorModel;  //The model matrix of mirror
-uniform samplerBuffer InstanceData;
-
-layout ( binding = 0) buffer BufferObject
+uniform mat4 mirrorModel;  //The view matrix of mirror
+//uniform samplerBuffer InstanceData;
+struct Instance
 {
-    int faceIds[];
+   vec4 Position;
+   vec4 Normal;
 };
+const int MaxSize = 2048;
+std140 uniform InstanceData
+{
+	Instance instances[MaxSize];
+};
+
 out vec4 esNormal;
 out vec4 esPosition;
 out vec2 fragTexCoord;
@@ -24,7 +30,7 @@ out vec3 esMirror;
 out vec3 esMirrorNormal;
 flat out int instanceId;
 out float discardFlag;//顶点在镜子背面
-out float flag;
+in float flag;
 //计算反射虚顶点，xyz是位置，w是discard标志
 vec4 Reflection(vec3 fPoint, vec3 fNormal, vec3 inPoint )
 {	
@@ -51,26 +57,20 @@ void main( void )
 	fragMatlID   = matlID;
 	fragTexCoord = texCoord;
 
-	
+	int id = gl_InstanceID;	
 
-	//int id = gl_InstanceID/**2*/;
-
-	int id = faceIds[gl_InstanceID];
-	
-	instanceId = id;
+	instanceId = gl_InstanceID;
 	mat4 mmv = view * mirrorModel;
-	vec4 fcenter = mmv* texelFetch(InstanceData, id*2);
-	vec4 fnormal= texelFetch(InstanceData, id*2+1);
-	/*vec4 fcenter =   view*vec4(5.0,0,0,1);
-	vec4 fnormal= vec4(-1,0,0,0);*/
-	
+	//vec4 fcenter = view* texelFetch(InstanceData, id*2);
+	//vec4 fnormal= texelFetch(InstanceData, id*2+1);
+	vec4 fcenter =  mmv * instances[gl_InstanceID].Position;
+	vec4 fnormal= instances[gl_InstanceID].Normal;
+	esMirror = fcenter.xyz/fcenter.w;
 	/*fnormal.xyz=normalize(mat3(mv)*fnormal.xyz);*/
 	//vec4 fnormal = vec4(1,0,0,0);inverse( transpose( view * model ) ) 
 	fnormal = inverse(transpose(mmv)) * fnormal;
 	esMirrorNormal = normalize(fnormal.xyz);
-	
 	/*vec3 virtualPos=Reflection(fcenter.xyz/fcenter.w, fnormal.xyz, eyePos.xyz/eyePos.w);		*/
-	esMirror= fcenter.xyz/fcenter.w;
 	vec3 inpoint = eyePos.xyz/eyePos.w;
 	//fnormal.xyz=normalize(mat3(mv)*fnormal.xyz);
 	vec4 virtualPos;

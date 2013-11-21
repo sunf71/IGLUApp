@@ -12,12 +12,12 @@ in vec4  esNormal;
 in vec4  esPosition;
 in vec2  fragTexCoord;
 in float fragMatlID;
-
+in float flag;
 
 uniform sampler2D   stencilTexture;
-in float instanceId;
-in vec4 esMirror;
-in vec4 esMirrorNormal;
+flat in int instanceId;
+in vec3 esMirror;
+in vec3 esMirrorNormal;
 in float discardFlag;
 
 out vec4 result;
@@ -27,9 +27,11 @@ void main( void )
 	vec2 fragCorrd = vec2((gl_FragCoord.x)/resX,(gl_FragCoord.y)/resY);
 	
 	//float dir = dot(esPosition-esMirror,esMirrorNormal);	
-	
+	vec4 texvalue = texture( stencilTexture, fragCorrd);
+	float id= (texvalue.x+texvalue.y+texvalue.z) - 1.0;	
 	//ÃÉ°æ²âÊÔ
-	float id=texture( stencilTexture, fragCorrd).x- 1.0;	
+	//float id=texture( stencilTexture, fragCorrd).x- 1.0;	
+
 	if(abs(id-instanceId)>0.01)
 	{	
 		discard;		

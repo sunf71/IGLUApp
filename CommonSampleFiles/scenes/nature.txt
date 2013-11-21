@@ -1,0 +1,30 @@
+# Setup a camera to view the scene
+camera pinhole
+     eye 0 0 -7
+   	 up 0 1 0
+     at 0 0 0
+	  fovy 45
+	  near 0.01
+	  far  150
+	  res 1024 768
+	  trackball
+end
+
+
+light point
+	pos    4.3 5.38 3.795
+	at     2.78 0.53 2.795
+	color  1.0 1.0 1.0
+	#near 0.1
+	#far 10.0
+	#trackball 0
+end
+
+object mesh obj grass
+		file ../../CommonSampleFiles/models/grass.obj	
+		#matrix translate 3.5 2.5 2
+		#matrix translate 0 1.5 0
+		#matrix scale .5 .5 .5	
+		#matrix rotate 180  0 1 0	
+		#material mirror
+end
