@@ -53,6 +53,20 @@ string myhash(int vid,int nid,int tid)
 	sprintf(result,"%d,%d,%d",vid,nid,tid);
 	return string(result);
 }
+void  VFCIGLUApp::UpdateReader( vector<int>& idxs, IGLUOBJReader::Ptr &reader)
+{
+	IGLUVertexArray::Ptr vao = reader->GetVertexArray();
+	uint* elementArray = reader->GetElementArrayData();
+	vector<uint> indices;
+	for(int i=0; i<idxs.size(); i++)
+	{
+		for(int j=0; j<3; j++)
+		{
+			indices.push_back(elementArray[idxs[i]*3+j]);
+		}
+	}
+	vao->SetElementArray(GL_UNSIGNED_INT,sizeof(uint)*indices.size(),&indices[0]);
+}
 void VFCIGLUApp::SetupNewVAO(IGLUVertexArray::Ptr& VAO, vector<int>& idxs, IGLUOBJReader::Ptr &reader)
 {
 	bool hasNormals = reader->HasNormals();
@@ -188,8 +202,9 @@ void VFCIGLUApp::FrustumCulling(Frustum& frustum,vector<AaBox>&aabbs, vector<int
 			passedIdx.push_back(i);
 		}
 	}
-
+#ifdef _DEBUG
 	printf("total %d triangles, after frustum cull remain %d triangles\n",total,passedIdx.size());
+#endif
 	
 }
 
@@ -204,7 +219,7 @@ void VFCIGLUApp::InitScene()
 			{
 				ObjModelObject* mesh = (ObjModelObject*)obj;
 				
-				IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str());
+				IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(),IGLU_OBJ_UNITIZE);
 				_objReaders.push_back(objReader);
 				glm::mat4 trans = mesh->getTransform();						
 				_objTransforms.push_back(IGLUMatrix4x4(&trans[0][0]));
@@ -216,9 +231,9 @@ void VFCIGLUApp::InitScene()
 			break;
 		}
 	}
-	
+
 	// We've loaded all our materials, so prepare to use them in rendering
-	IGLUOBJMaterialReader::FinalizeMaterialsForRendering();
+	IGLUOBJMaterialReader::FinalizeMaterialsForRendering(IGLU_TEXTURE_REPEAT);
 	
 	
 }
@@ -234,6 +249,12 @@ void VFCIGLUApp::Display()
 	
 	for(int i=0; i<_objReaders.size(); i++)
 	{
+		Frustum frustum(_camera->GetProjectionMatrix(),   _camera->GetViewMatrix() * _objTransforms[i]);
+		vector<int> idxs;
+		_bvh->frustumCulling(frustum,idxs);
+		if (idxs.size() ==0)
+			continue;
+		UpdateReader(idxs,_objReaders[i]);
 		_shaders[0]->Enable();
 		_shaders[0]["project"]         = _camera->GetProjectionMatrix();
 		_shaders[0]["model"]           = _objTransforms[i];
@@ -241,23 +262,25 @@ void VFCIGLUApp::Display()
 		_shaders[0]["lightIntensity" ] = float(1);
 		_shaders[0]["matlInfoTex"]     = IGLUOBJMaterialReader::s_matlCoefBuf;
 		_shaders[0]["matlTextures"]    = IGLUOBJMaterialReader::s_matlTexArray;
-		_shaders[0]["lightPos"] = _lightPos;
+		//_shaders[0]["lightPos"] = _lightPos;
 		_shaders[0]["lightColor"] = _lightColor;
-		Frustum frustum(_camera->GetProjectionMatrix(),   _camera->GetViewMatrix() * _objTransforms[i]);
-		vector<int> idxs;
-		_bvh->frustumCulling(frustum,idxs);
+		
 		//FrustumCulling(frustum,_aabbs,idxs);
 		//FrustumCulling(frustum,_bboxs,idxs);
+#ifdef _DEBUG
 		printf("total %d triangles, after frustum cull remain %d triangles\n",_bvh->NumOfPrims(),idxs.size());
-		_vao = new IGLUVertexArray();
-		SetupNewVAO(_vao,idxs,_objReaders[i]);
+#endif
+		//_vao = new IGLUVertexArray();
+		//SetupNewVAO(_vao,idxs,_objReaders[i]);
 		//_objReaders[i]->Draw(_shaders[0]);
-		
-		_vao->DrawElements( GL_TRIANGLES, 3* idxs.size() );
 	
+		
+		//_vao->DrawElements( GL_TRIANGLES, 3* idxs.size() );
+	    _objReaders[i]->Draw(_shaders[0]);
+
 		_shaders[0]->Disable();
 		
-		delete _vao;
+		//delete _vao;
 	}
 
 

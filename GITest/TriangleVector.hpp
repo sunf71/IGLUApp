@@ -1,5 +1,5 @@
 
-
+#pragma once
 // only msvc need to be fix
 
 #include "Triangle.h"

@@ -1,6 +1,23 @@
 #include "BBox.h"
 #include <algorithm>
 
+Vector3 minV(const Vector3& p1, const Vector3& p2)
+{
+	float minx,miny,minz;
+	minx = p1.x < p2.x ? p1.x : p2.x;
+	miny = p1.y < p2.y ? p1.y : p2.y;
+	minz = p1.z < p2.z ? p1.z : p2.z;
+	return Vector3(minx,miny,minz);
+}
+Vector3 maxV(const Vector3& p1, const Vector3& p2)
+{
+	float maxx,maxy,maxz;
+	maxx = p1.x > p2.x ? p1.x : p2.x;
+	maxy = p1.y > p2.y ? p1.y : p2.y;
+	maxz = p1.z > p2.z ? p1.z : p2.z;
+	return Vector3(maxx,maxy,maxz);
+}
+
 BBox::BBox(const Vector3& min, const Vector3& max)
 : min(min), max(max) { extent = max - min; }
 
@@ -10,6 +27,11 @@ BBox::BBox(const Vector3& p)
 void BBox::expandToInclude(const Vector3& p) {
  min = ::min(min, p);
  max = ::max(max, p);
+	//min = minV(min,p);
+	//max = maxV(max,p);
+	//extent.x = max.x-min.x;
+	//extent.y = max.y-min.y;
+	//extent.z = max.z-min.z;
  extent = max - min;
 }
 

@@ -91,7 +91,8 @@ public :
 		aabox.expandToInclude(Vector3(p3.X(),p3.Y(),p3.Z()));
 	}
 	void GetAABBs(IGLUOBJReader::Ptr & reader);
-
+	//只需要更新reader的elements array
+	void UpdateReader( vector<int>& idxs, IGLUOBJReader::Ptr &reader);
 	void SetupNewVAO(IGLUVertexArray::Ptr& VAO, vector<int>& idxs, IGLUOBJReader::Ptr &reader);
 protected:
 	

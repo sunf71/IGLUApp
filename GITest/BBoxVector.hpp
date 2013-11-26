@@ -1,4 +1,4 @@
-
+#pragma once
 
 // only msvc need to be fix
 

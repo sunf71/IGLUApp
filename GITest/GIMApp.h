@@ -1,6 +1,10 @@
 #ifndef GIMAPP_H
 #define GIMAPP_H
-
+#include "Frustum.h"
+#include "BBoxVector.hpp"
+#include "Triangle.h"
+#include "TriangleVector.hpp"
+#include "BVH.h"
 #include "IGLUApp.h"
 struct InstanceData
 {
@@ -26,6 +30,9 @@ public:
 	void InitBufferOld();
 	//更新vao的element array，只绘制正面的镜面
 	int UpdateMirrorVAO();
+	void GetAABBs(IGLUOBJReader::Ptr & reader);
+	//只需要更新reader的elements array
+	void UpdateReader( vector<int>& idxs, IGLUOBJReader::Ptr &reader);
 private:
 	IGLUShaderProgram::Ptr _mirrorShader;
 	IGLUShaderProgram::Ptr _giShader;
@@ -51,6 +58,11 @@ private:
 	
 	IGLUCPUTimer::Ptr _cpuTimer;
 	IGLUGPUTimer::Ptr _gpuTimer;
+
+	
+	vector<BBox> _bboxs;	
+	vector<Object*> _triangleObjects;	
+	BVH * _bvh;
 };
 
 

@@ -34,8 +34,10 @@ void main( void )
 
 	if(abs(id-instanceId)>0.01)
 	{	
-		discard;		
+		discard;
+	
 	}
+
 	//镜面在顶点前面
 	if (discardFlag < 0)
 		discard;

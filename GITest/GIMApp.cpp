@@ -103,8 +103,8 @@ void GIMApp::InitBufferOld()
 }
 void GIMApp::InitBuffer()
 {	
-	InitBufferOld();
-	return;
+	/*InitBufferOld();
+	return;*/
 	IGLUOBJReader::Ptr _mirrorMesh = _objReaders[_mirrorId];
 	//保存镜面的法线和点
 	int TriNum = _mirrorMesh->GetTriangleCount();	
@@ -253,6 +253,7 @@ void GIMApp::InitScene()
 				
 				objReader = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(), IGLU_OBJ_UNITIZE);
 		
+				GetAABBs(objReader);
 				//IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( model,IGLU_OBJ_COMPACT_STORAGE);
 				_objReaders.push_back(objReader);
 				glm::mat4 trans = (mesh->getTransform());					
@@ -273,9 +274,55 @@ void GIMApp::InitScene()
 	IGLUOBJMaterialReader::FinalizeMaterialsForRendering(IGLU_TEXTURE_REPEAT);
 
 	InitBuffer();
-
 }
+void GetAABB(vec3& p1, vec3& p2, vec3& p3, BBox& aabox)
+{
+	aabox = BBox(Vector3(p1.X(),p1.Y(),p1.Z()));
+	aabox.expandToInclude(Vector3(p2.X(),p2.Y(),p2.Z()));
+	aabox.expandToInclude(Vector3(p3.X(),p3.Y(),p3.Z()));
+}
+void GIMApp::GetAABBs(IGLUOBJReader::Ptr &reader)
+{
+	int total = reader->GetTriangleCount();
+	//获取每个三角形，计算AABB保存起来
+	_triangleObjects.reserve(total);
+	//_aabbs = vector<AaBox>(total);
+	_bboxs = vector<BBox>(total);
+	vector<IGLUOBJTri *> tris = reader->GetTriangles();
+	vector<vec3> vertices = reader->GetVertecies();
+	for(int i=0; i<total; i++)
+	{
+		IGLUOBJTri* tri = tris[i];
+	    vec3 p1 = vertices[tri->vIdx[0]];
+		vec3 p2 = vertices[tri->vIdx[1]];
+		vec3 p3 = vertices[tri->vIdx[2]];
 
+		//把三角形数据复制一份作为成员变量
+		//不知为何回调函数中访问不了reader的数据，所以复制一份存起来
+		IGLUOBJTri triangle(*tri);		
+		Triangle *t = new Triangle(p1,p2,p3,i);
+		_triangleObjects.push_back(t);
+
+		//GetAABB(p1,p2,p3,_aabbs[i]);
+		GetAABB(p1,p2,p3,_bboxs[i]);
+	}
+
+	_bvh = new BVH(&_triangleObjects);
+	
+}
+void GIMApp::UpdateReader( vector<int>& idxs, IGLUOBJReader::Ptr &reader)
+{
+	IGLUVertexArray::Ptr vao = reader->GetVertexArray();
+	vector<uint> indices;
+	for(int i=0; i<idxs.size(); i++)
+	{
+		for(int j=0; j<3; j++)
+		{
+			indices.push_back(idxs[i]*3+j);
+		}
+	}
+	vao->SetElementArray(GL_UNSIGNED_INT,sizeof(uint)*indices.size(),&indices[0]);
+}
 int GIMApp::UpdateMirrorVAO()
 {
 	float * mirrorVAO = new float[_instanceDatum.size()*3*7];
@@ -339,8 +386,8 @@ void GIMApp::InitShadersOld()
 }
 void GIMApp::InitShaders()
 {
-	InitShadersOld();
-	return;
+	/*InitShadersOld();
+	return;*/
 	_objShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/object.vert.glsl","../../CommonSampleFiles/shaders/object.frag.glsl");
 	_objShader->SetProgramEnables( IGLU_GLSL_DEPTH_TEST | IGLU_GLSL_BLEND); 
 
@@ -353,15 +400,15 @@ void GIMApp::InitShaders()
 
 void GIMApp::Display()
 {	
-	DisplayOld();	
-	return;
+	/*DisplayOld();	
+	return;*/
 	
 	// Start timing this frame draw
 	_frameRate->StartFrame();
 	// Clear the screen
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	_gpuTimer->Start();
 	_cpuTimer->Start();
 #endif
@@ -407,7 +454,7 @@ void GIMApp::Display()
 	//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 	//IGLUDraw::Fullscreen( _mirrorStencilFBO[IGLU_COLOR0], 0 );
 	//return;
-#ifdef DEBUG
+#ifdef _DEBUG
 	printf("stencil building gpu: %lf cpu: %lf \n", _gpuTimer->Tick(), _cpuTimer->Tick());
 #endif
 	
@@ -428,10 +475,18 @@ void GIMApp::Display()
 		_giShader["stencilTexture"] = _mirrorStencilFBO[0];
 		 _giShader["mirrorModel"] = _objTransforms[_mirrorId];
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER,0,_SSBO);
+		
+		
 		for(int i=0; i<_objReaders.size(); i++)
 		{
 			if (i != _mirrorId)
 			{
+				Frustum frustum(_camera->GetProjectionMatrix(),   _camera->GetViewMatrix() * _objTransforms[i]);
+				vector<int> idxs;
+				_bvh->frustumCulling(frustum,idxs);
+				if (idxs.size() ==0)
+					continue;
+				UpdateReader(idxs,_objReaders[i]);
 				_giShader["model"]           = _objTransforms[i];				
 				glDisable(GL_CULL_FACE);//镜面绘制禁用背面剔除
 				glEnable(GL_DEPTH_TEST);
@@ -454,7 +509,7 @@ void GIMApp::Display()
 	//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
   /*  	IGLUDraw::Fullscreen( _mirrorFBO[IGLU_COLOR0], 0 );
 		return;*/
-#ifdef DEBUG
+#ifdef _DEBUG
 		printf("GI Drawing gpu: %lf cpu: %lf \n", _gpuTimer->Tick(), _cpuTimer->Tick());
 #endif
 		
@@ -469,7 +524,7 @@ void GIMApp::Display()
 
 		_mirrorVAO->DrawElements(GL_TRIANGLES,mirrorMesh->GetTriangleCount()*3);
 		_mirrorTexShader->Disable();
-#ifdef DEBUG
+#ifdef _DEBUG
 		printf("mirror texturing: %lf cpu: %lf \n", _gpuTimer->Tick(), _cpuTimer->Tick());
 #endif
 	}

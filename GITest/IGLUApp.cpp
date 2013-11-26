@@ -122,7 +122,7 @@ IGLUApp::~IGLUApp()
 }
 void IGLUApp::InitShaders()
 {
-	IGLUShaderProgram::Ptr dftShader = new IGLUShaderProgram("shaders/object.vert.glsl",
+	IGLUShaderProgram::Ptr dftShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/object.vert.glsl",
 		"shaders/object.frag.glsl");
 	dftShader->SetProgramEnables( IGLU_GLSL_DEPTH_TEST | IGLU_GLSL_BLEND); 
 	//dftShader->SetProgramDisables( IGLU_GLSL_BLEND );
@@ -141,7 +141,7 @@ void IGLUApp::InitScene()
 			{
 				ObjModelObject* mesh = (ObjModelObject*)obj;
 				GLMmodel* model = glmReadOBJ(mesh->getObjFileName().c_str());
-				IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( model,IGLU_OBJ_COMPACT_STORAGE);
+				IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( model, IGLU_OBJ_UNITIZE);
 				//IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(),IGLU_OBJ_COMPACT_STORAGE);
 				_objReaders.push_back(objReader);
 				glm::mat4 trans = mesh->getTransform();

@@ -6,7 +6,7 @@
 #include <gl/gl.h>
 #include "Sphere.h"
 #define NUM_TREES				10000
-#define NUM_GRASS				40*40
+#define NUM_GRASS				80*80
 
 
 
@@ -39,7 +39,7 @@ private:
 	{		
 		_instanceVA = new IGLUVertexArray();
 		_instanceVA->SetVertexArray(sizeof(InstanceData)*NUM_GRASS,_instanceData);
-		_instanceVA->EnableAttribute(_shaders[3]["InstancePosition"],4,GL_FLOAT);
+		_instanceVA->EnableAttribute(_shaders[3]["InstancePosition"],4,GL_FLOAT,8*sizeof(float));
 		 _feedback = new IGLUTransformFeedback();
 		_feedbackBuffer = new IGLUBuffer();
 		_feedbackBuffer->SetBufferData(NUM_GRASS*sizeof(InstanceData));
@@ -296,12 +296,12 @@ void Test()
 IGLUApp* app;
 void main()
 {
-	app = new GITestApp("../../CommonSampleFiles/scenes/nature.txt");
+	//app = new GITestApp("../../CommonSampleFiles/scenes/nature.txt");
 
 	//app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
-	//app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
+	app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new TestApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
-	//app = new VFCIGLUApp("sponza.txt");
+	//app = new VFCIGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");
 	//GLint  value;
 	//glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE,&value);
 	//printf("%d",value);
