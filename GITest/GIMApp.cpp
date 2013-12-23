@@ -3,7 +3,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <time.h>
-
+#include "IGLUMathHelper.h"
 
 
 
@@ -103,8 +103,8 @@ void GIMApp::InitBufferOld()
 }
 void GIMApp::InitBuffer()
 {	
-	/*InitBufferOld();
-	return;*/
+	InitBufferOld();
+	return;
 	IGLUOBJReader::Ptr _mirrorMesh = _objReaders[_mirrorId];
 	//保存镜面的法线和点
 	int TriNum = _mirrorMesh->GetTriangleCount();	
@@ -253,16 +253,22 @@ void GIMApp::InitScene()
 				
 				objReader = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(), IGLU_OBJ_UNITIZE);
 		
-				GetAABBs(objReader);
+				
 				//IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( model,IGLU_OBJ_COMPACT_STORAGE);
 				_objReaders.push_back(objReader);
 				glm::mat4 trans = (mesh->getTransform());					
-				_objTransforms.push_back(IGLUMatrix4x4(&trans[0][0]));
+				IGLUMatrix4x4 model(&trans[0][0]);
+				_objTransforms.push_back(model);
 				if (!obj->getMaterialName().compare("mirror"))
 				{
 					_mirrorId = _objReaders.size()-1;		
 					_mirrorTransform = _objTransforms[_objTransforms.size()-1];
-				}			
+				}
+				else
+				{
+					//目前只支持一个obj模型
+					GetAABBs(objReader,model);
+				}
 				//delete model;
 				break;
 			}
@@ -281,7 +287,7 @@ void GetAABB(vec3& p1, vec3& p2, vec3& p3, BBox& aabox)
 	aabox.expandToInclude(Vector3(p2.X(),p2.Y(),p2.Z()));
 	aabox.expandToInclude(Vector3(p3.X(),p3.Y(),p3.Z()));
 }
-void GIMApp::GetAABBs(IGLUOBJReader::Ptr &reader)
+void GIMApp::GetAABBs(IGLUOBJReader::Ptr &reader, IGLUMatrix4x4& model)
 {
 	int total = reader->GetTriangleCount();
 	//获取每个三角形，计算AABB保存起来
@@ -293,13 +299,20 @@ void GIMApp::GetAABBs(IGLUOBJReader::Ptr &reader)
 	for(int i=0; i<total; i++)
 	{
 		IGLUOBJTri* tri = tris[i];
-	    vec3 p1 = vertices[tri->vIdx[0]];
-		vec3 p2 = vertices[tri->vIdx[1]];
-		vec3 p3 = vertices[tri->vIdx[2]];
+	    vec4 pp1 = vec4(vertices[tri->vIdx[0]],1.0);
+		vec4 pp2 = vec4(vertices[tri->vIdx[1]],1.0);
+		vec4 pp3 = vec4(vertices[tri->vIdx[2]],1.0);
+		pp1 = model*pp1;
+		pp2 = model*pp2;
+		pp3 = model*pp3;
+		vec3 p1 = pp1.xyz()/pp1.W();
+		vec3 p2 = pp2.xyz()/pp2.W();
+		vec3 p3 = pp3.xyz()/pp3.W();
 
 		//把三角形数据复制一份作为成员变量
 		//不知为何回调函数中访问不了reader的数据，所以复制一份存起来
-		IGLUOBJTri triangle(*tri);		
+		IGLUOBJTri triangle(*tri);
+		
 		Triangle *t = new Triangle(p1,p2,p3,i);
 		_triangleObjects.push_back(t);
 
@@ -307,24 +320,27 @@ void GIMApp::GetAABBs(IGLUOBJReader::Ptr &reader)
 		GetAABB(p1,p2,p3,_bboxs[i]);
 	}
 
+	
 	_bvh = new BVH(&_triangleObjects);
 	
 }
 void GIMApp::UpdateReader( vector<int>& idxs, IGLUOBJReader::Ptr &reader)
 {
 	IGLUVertexArray::Ptr vao = reader->GetVertexArray();
+	uint* elementArray = reader->GetElementArrayData();
 	vector<uint> indices;
 	for(int i=0; i<idxs.size(); i++)
 	{
 		for(int j=0; j<3; j++)
 		{
-			indices.push_back(idxs[i]*3+j);
+			indices.push_back(elementArray[idxs[i]*3+j]);
 		}
 	}
 	vao->SetElementArray(GL_UNSIGNED_INT,sizeof(uint)*indices.size(),&indices[0]);
 }
 int GIMApp::UpdateMirrorVAO()
 {
+	_vFrustums.clear();
 	float * mirrorVAO = new float[_instanceDatum.size()*3*7];
 	vector<uint> indices;
 	vector<InstanceData> instances;
@@ -344,6 +360,14 @@ int GIMApp::UpdateMirrorVAO()
 	    //背面裁剪
 		if((eyePos).Dot(trNormal)>0)
 		{
+			//每个镜面创建虚视锥
+			Frustum frustum;
+			vec3 p1(_VAOBuffer+i*21);
+			vec3 p2(_VAOBuffer+i*21+7);
+			vec3 p3(_VAOBuffer+i*21+14);
+			CreateVirtualFrustum(p1,p2,p3,frustum);
+			_vFrustums.push_back(frustum);
+
 			//创建新的vao
 			memcpy(mirrorVAO+k*21,_VAOBuffer+i*21,sizeof(float)*21);
 			//面片id数
@@ -386,8 +410,8 @@ void GIMApp::InitShadersOld()
 }
 void GIMApp::InitShaders()
 {
-	/*InitShadersOld();
-	return;*/
+	InitShadersOld();
+	return;
 	_objShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/object.vert.glsl","../../CommonSampleFiles/shaders/object.frag.glsl");
 	_objShader->SetProgramEnables( IGLU_GLSL_DEPTH_TEST | IGLU_GLSL_BLEND); 
 
@@ -396,17 +420,27 @@ void GIMApp::InitShaders()
 	_giShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/gi.vert.glsl","../../CommonSampleFiles/shaders/gi.frag.glsl");
 
 	_mirrorTexShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/mirrorTexture.vert.glsl","../../CommonSampleFiles/shaders/mirrorTexture.frag.glsl");
-}
 
+	_simpleShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/simple.vert.glsl","../../CommonSampleFiles/shaders/simple.frag.glsl");
+}
+void GIMApp::DisplayFrustum(Frustum& frustum)
+{
+	
+	_simpleShader->Enable();
+	_simpleShader["mvp"] = _camera->GetProjectionMatrix()* _camera->GetViewMatrix();
+	frustum.Draw();
+	_simpleShader->Disable();
+}
 void GIMApp::Display()
 {	
-	/*DisplayOld();	
-	return;*/
+	DisplayOld();	
+	return;
+	// Clear the screen
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
 	// Start timing this frame draw
 	_frameRate->StartFrame();
-	// Clear the screen
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	
 
 #ifdef _DEBUG
 	_gpuTimer->Start();
@@ -481,12 +515,6 @@ void GIMApp::Display()
 		{
 			if (i != _mirrorId)
 			{
-				Frustum frustum(_camera->GetProjectionMatrix(),   _camera->GetViewMatrix() * _objTransforms[i]);
-				vector<int> idxs;
-				_bvh->frustumCulling(frustum,idxs);
-				if (idxs.size() ==0)
-					continue;
-				UpdateReader(idxs,_objReaders[i]);
 				_giShader["model"]           = _objTransforms[i];				
 				glDisable(GL_CULL_FACE);//镜面绘制禁用背面剔除
 				glEnable(GL_DEPTH_TEST);
@@ -545,6 +573,7 @@ void GIMApp::Display()
 		}
 	}
 	_objShader->Disable();
+
 	//IGLUDraw::Fullscreen( _mirrorStencilFBO[IGLU_COLOR0], IGLU_DRAW_FLIP_Y );
 	// Draw the framerate on the screen
 	char buf[32];
@@ -623,6 +652,14 @@ void GIMApp::DisplayOld()
 		{
 			if (i != _mirrorId)
 			{
+				Frustum frustum = _vFrustums[0];
+				vector<int> idxs;
+				_bvh->frustumCulling(frustum,idxs);
+				if (idxs.size() ==0)
+					continue;
+				printf("%d total %d remain\n",_objReaders[i]->GetTriangleCount(),idxs.size());
+				UpdateReader(idxs,_objReaders[i]);
+
 				_giShader["model"]           = _objTransforms[i];				
 				glDisable(GL_CULL_FACE);//镜面绘制禁用背面剔除
 				glEnable(GL_DEPTH_TEST);
@@ -682,4 +719,59 @@ void GIMApp::DisplayOld()
 	sprintf( buf, "%.1f fps", _frameRate->EndFrame() );
 	IGLUDraw::DrawText( IGLU_FONT_VARIABLE, 0, 0, buf );
 
+}
+
+void GIMApp::CreateVirtualFrustum(vec3& p1, vec3& p2, vec3& p3, Frustum& vfrustum)
+{
+	vec3 _eye = _camera->GetEye();
+	vec3 _at = _camera->GetAt();
+
+	vec3 normal = ((p3-p2).Cross(p1-p2));
+	normal.Normalize();
+	vec3 vEye = _eye - 2*(_eye-p1).Dot(normal)*normal;
+	vec3 vAt;	
+	vec3 dir = (_eye-vEye);
+	dir.Normalize();
+	if (!IGLUMathHelper::LineIntersecPlane(vEye,dir,p1,p2,p3,vAt))
+	{
+		printf("Error in CreateVirtual Frustum\n");
+		return;
+	}
+	vec3 up = _camera->GetUp();
+	vec3 right = dir.Cross(up);
+	right.Normalize();
+	vec3 y;
+	y[0] = abs((p1-vAt).Dot(up));
+	y[1] = abs((p2-vAt).Dot(up));
+	y[2] = abs((p3-vAt).Dot(up));
+	float yMax = y.MaxComponent();
+	vec3 x;
+	x[0] = abs((p1-vAt).Dot(right));
+	x[1] = abs((p2-vAt).Dot(right));
+	x[2] = abs((p3-vAt).Dot(right));
+	float xMax = x.MaxComponent();
+	float nearZ = (vAt-vEye).Length();
+	float fovY =  2*atan(yMax/nearZ)/IGLU_PI*180;
+	float ar = yMax / xMax;
+	/*farZ = 20;*/
+	vfrustum = Frustum(vEye,vAt,up,fovY,nearZ,_camera->GetFar(),ar);
+}
+
+void GIMApp::CreateVirtualFrustum(vec3& p1, vec3& normal, Frustum& vfrustum)
+{
+	vec3 _eye = _camera->GetEye();
+	vec3 _at = _camera->GetAt();
+	
+	vec3 vEye = _eye - 2*(_eye-p1).Dot(normal)*normal;
+	vec3 vAt = _at - 2*(_at-p1).Dot(normal)*normal;
+	vec3 inter;
+	vec3 dir = (vAt-vEye);
+	dir.Normalize();
+	if (!IGLUMathHelper::LineIntersecPlane(vEye,dir,p1,normal,inter))
+	{
+		printf("Error in CreateVirtual Frustum\n");
+		return;
+	}
+	float nearZ = (vEye - inter).Length();
+	vfrustum = Frustum(vEye,vAt,_camera->GetUp(),_camera->GetFovY(),_camera->GetNear(),_camera->GetFar(),_camera->GetAspectRatio());
 }

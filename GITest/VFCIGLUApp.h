@@ -90,7 +90,7 @@ public :
 		aabox.expandToInclude(Vector3(p2.X(),p2.Y(),p2.Z()));
 		aabox.expandToInclude(Vector3(p3.X(),p3.Y(),p3.Z()));
 	}
-	void GetAABBs(IGLUOBJReader::Ptr & reader);
+	void GetAABBs(IGLUOBJReader::Ptr & reader, IGLUMatrix4x4 & model);
 	//只需要更新reader的elements array
 	void UpdateReader( vector<int>& idxs, IGLUOBJReader::Ptr &reader);
 	void SetupNewVAO(IGLUVertexArray::Ptr& VAO, vector<int>& idxs, IGLUOBJReader::Ptr &reader);

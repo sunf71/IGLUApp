@@ -13,7 +13,7 @@ void CopyToVector(IGLUArray1D<T>& src, vector<T>& des)
 	}
 }
 
-void VFCIGLUApp::GetAABBs(IGLUOBJReader::Ptr &reader)
+void VFCIGLUApp::GetAABBs(IGLUOBJReader::Ptr &reader, IGLUMatrix4x4& model)
 {
 	int total = reader->GetTriangleCount();
 	//获取每个三角形，计算AABB保存起来
@@ -25,10 +25,15 @@ void VFCIGLUApp::GetAABBs(IGLUOBJReader::Ptr &reader)
 	for(int i=0; i<total; i++)
 	{
 		IGLUOBJTri* tri = tris[i];
-	    vec3 p1 = vertices[tri->vIdx[0]];
-		vec3 p2 = vertices[tri->vIdx[1]];
-		vec3 p3 = vertices[tri->vIdx[2]];
-
+	    vec4 pp1 = vec4(vertices[tri->vIdx[0]],1.0);
+		vec4 pp2 = vec4(vertices[tri->vIdx[1]],1.0);
+		vec4 pp3 = vec4(vertices[tri->vIdx[2]],1.0);
+		pp1 = model*pp1;
+		pp2 = model*pp2;
+		pp3 = model*pp3;
+		vec3 p1 = pp1.xyz()/pp1.W();
+		vec3 p2 = pp2.xyz()/pp2.W();
+		vec3 p3 = pp3.xyz()/pp3.W();
 		//把三角形数据复制一份作为成员变量
 		//不知为何回调函数中访问不了reader的数据，所以复制一份存起来
 		IGLUOBJTri triangle(*tri);
@@ -221,9 +226,10 @@ void VFCIGLUApp::InitScene()
 				
 				IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(),IGLU_OBJ_UNITIZE);
 				_objReaders.push_back(objReader);
-				glm::mat4 trans = mesh->getTransform();						
-				_objTransforms.push_back(IGLUMatrix4x4(&trans[0][0]));
-				GetAABBs(objReader);
+				glm::mat4 trans = mesh->getTransform();				
+				IGLUMatrix4x4 model = IGLUMatrix4x4(&trans[0][0]);
+				_objTransforms.push_back(model);
+				GetAABBs(objReader,model);
 				
 				break;
 			}

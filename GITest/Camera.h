@@ -105,13 +105,35 @@ public:
 	{
 		return _resY;
 	}
-	vec3 GetAt()
+	const vec3& GetAt()
 	{
-		return _at;
+		vec4 at = _trackBall->GetMatrix() *vec4(_at,1);
+		return  at.xyz()/at.W();
 	}
-	vec3 GetEye()
+	const vec3& GetEye() 
 	{
-		return _eye;
+		vec4 eye = _trackBall->GetMatrix()*vec4(_eye,1);
+		return eye.xyz()/eye.W();
+	}
+	const vec3& GetUp()
+	{
+		return _up;
+	}
+	float GetFovY()
+	{
+		return _fovy;
+	}
+	float GetNear()
+	{
+		return _nearZ;
+	}
+	float GetFar()
+	{
+		return _farZ;
+	}
+	float GetAspectRatio()
+	{
+		return _aspecRatio;
 	}
 private:
 

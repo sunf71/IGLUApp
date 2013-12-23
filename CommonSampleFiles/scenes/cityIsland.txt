@@ -2,7 +2,7 @@
 
 # Setup a camera to view the scene
 camera pinhole
-	eye 0 0 10
+	eye 0 0 -20
 	at 0 0 0
       up 0 1 0    
 	  fovy 38.5
@@ -30,7 +30,7 @@ end
 #end
 object mesh obj bunny
 			file ../../CommonSampleFiles/models/Lincoln.obj		
-			matrix translate 3 0 0
+			matrix translate 0 0 -6
 			#matrix scale 2 2 2	
 			#matrix rotate 180 0 1 0			   
 end
@@ -42,7 +42,7 @@ end
 #		matrix scale 110 110 110		  
 #end
 object mesh obj mirror   
-			file ../../CommonSampleFiles/models/cube.obj					
+			file ../../CommonSampleFiles/models/plane.obj					
 		 #matrix translate 0 0 0
          #matrix scale 0.5 0.5 0.5
 		#matrix scale 3 6 3		

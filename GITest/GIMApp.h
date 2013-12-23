@@ -30,15 +30,21 @@ public:
 	void InitBufferOld();
 	//更新vao的element array，只绘制正面的镜面
 	int UpdateMirrorVAO();
-	void GetAABBs(IGLUOBJReader::Ptr & reader);
+	void GetAABBs(IGLUOBJReader::Ptr &reader, IGLUMatrix4x4& model);
 	//只需要更新reader的elements array
 	void UpdateReader( vector<int>& idxs, IGLUOBJReader::Ptr &reader);
+	//根据镜面三角形(p1,p2,p3)创建虚视锥vfrustum;
+	void CreateVirtualFrustum(vec3& p1, vec3& p2, vec3& p3, Frustum& vfrustum);
+	//根据镜面p,normal创建虚视锥vfrustum;
+	void CreateVirtualFrustum(vec3& p, vec3& normal, Frustum& vfrustum);
+	void DisplayFrustum(Frustum& frustum);
 private:
 	IGLUShaderProgram::Ptr _mirrorShader;
 	IGLUShaderProgram::Ptr _giShader;
 	IGLUShaderProgram::Ptr _objShader;
 	IGLUShaderProgram::Ptr _mirrorTexShader;
 	IGLUShaderProgram::Ptr _testShader;
+	IGLUShaderProgram::Ptr _simpleShader;
 	//把镜面数据保存在buffer中
 	IGLUBuffer::Ptr _mirrorDataBuffer;
 	IGLUTextureBuffer::Ptr _mirrorBuffer;
@@ -58,7 +64,8 @@ private:
 	
 	IGLUCPUTimer::Ptr _cpuTimer;
 	IGLUGPUTimer::Ptr _gpuTimer;
-
+	//virtual view frustum;
+	vector<Frustum> _vFrustums;
 	
 	vector<BBox> _bboxs;	
 	vector<Object*> _triangleObjects;	

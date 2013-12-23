@@ -103,5 +103,61 @@ public:
 	}
 };
 
+//用于创建BVH
+class Box  : public Object
+{
+private:
+	int _id;	
+	Vector3 _center;
+public:
+	Box(){}
+	Vector3 min,max;
+	Box(const vec3& m, const vec3& M, int id):_id(id)
+	{
+		min.x = m.X();
+		min.y = m.Y();
+		min.z = m.Z();
+		max.x = M.X();
+		max.y = M.Y();
+		max.z = M.Z();
+		vec3 center = (m+M)/2;
+		_center = Vector3(center.X(),center.Y(),center.Z());
+		
+	}
+	
+	virtual bool getIntersection(
+		const Ray& ray, 
+		IntersectionInfo* intersection)  const
+	{
+		//not implemented
+		return true;
+	}
 
+	//! Return an object normal based on an intersection
+	virtual Vector3 getNormal(const IntersectionInfo& I) const
+	{
+		return Vector3(0,0,0);
+	}
+
+	//! Return a bounding box for this object
+	virtual BBox getBBox() const
+	{ 
+	/*	BBox _bbox(p1);
+		_bbox.expandToInclude(p2);
+		_bbox.expandToInclude(p3);*/
+
+		return BBox(min,max);
+	}
+
+	//! Return the centroid for this object. (Used in BVH Sorting)
+	virtual Vector3 getCentroid() const
+	{
+		return _center;
+	}
+
+	int getId() const
+	{
+		return _id;
+	}
+};
 #endif

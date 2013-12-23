@@ -26,16 +26,27 @@ struct AaBox
 class Frustum
 {
 public :
+	Frustum()
+	{
+		
+	}
+	~Frustum()
+	{
+		if (_vao != NULL)
+			delete _vao;
+	}
 	Frustum(const vec3 &eye, const vec3 &at, const vec3& up,  
-		float fovy, float nearZ, float farZ, float aspectRatio)
+		float fovy, float nearZ, float farZ, float aspectRatio):_eye(eye),_at(at),_up(up),_fovy(fovy),_near(nearZ),_far(farZ),_aspectRatio(aspectRatio)
 	{
 		_PM = IGLUMatrix4x4::Perspective(fovy,aspectRatio,nearZ,farZ);	
 		_VM = IGLUMatrix4x4::LookAt(eye,at,up);
 		_MVP = _PM * _VM ;
+		_vao = NULL;
 	}
 	Frustum( const IGLUMatrix4x4 & pm, IGLUMatrix4x4 & vm):_PM(pm),_VM(vm)
 	{
 		_MVP = _PM * _VM;
+		_vao = NULL;
 	}
 	inline CullingResult ContainsTriangle(Triangle* tri)
 	{
@@ -152,12 +163,15 @@ public :
 
 		return inFrustum ? In : Intersect;
 	}
-
+	void Draw();
+	void CreateVAO();
 private:
 	IGLUMatrix4x4 _PM;
 	IGLUMatrix4x4 _VM;
 	IGLUMatrix4x4 _MVP;
-
+	IGLUVertexArray::Ptr _vao;
+	vec3 _eye,_at,_up;
+	float _fovy,_aspectRatio,_near,_far;
 };
 
 #endif

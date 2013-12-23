@@ -78,6 +78,9 @@
     <ClInclude Include="TestApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="IGLUMathHelper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IGLUApp.cpp">
@@ -102,6 +105,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TestApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -200,6 +206,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\CommonSampleFiles\shaders\giVA.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\simple.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\simple.vert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

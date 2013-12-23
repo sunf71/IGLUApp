@@ -5,6 +5,10 @@
 #include "igluRandom.h"
 #include <gl/gl.h>
 #include "Sphere.h"
+#include "Frustum.h"
+#include "triangle.h"
+#include "BVH.h"
+#include "Frustum.h"
 #define NUM_TREES				10000
 #define NUM_GRASS				80*80
 
@@ -293,15 +297,71 @@ void Test()
 	Vector3 min = ::min(p1,p2);
 }
 
+void testTriFrustum()
+{
+	vec3 eye(0,0,1);
+	vec3 at(0,0,0);
+	vec3 up(0,1,0);
+	float fovy = 90;
+	float nearZ = 1.f;
+	float farZ = 20.f;
+
+	Frustum f(eye,at,up,fovy,nearZ,farZ,4.0/3.0);
+	IGLUMatrix4x4 project = IGLUMatrix4x4::Perspective(fovy,4.0/3.0,nearZ,farZ);
+	IGLUMatrix4x4 view = IGLUMatrix4x4::LookAt(eye,at,up);
+	IGLUMatrix4x4 mvp = project*view;
+	vec3 A(1,0,0);
+	vec3 B(0,1,0);
+	vec3 C(-1,0,0);
+
+	vec4 pa = mvp*vec4(A,1);
+	vec4 pb = mvp*vec4(B,1);
+	vec4 pc = mvp*vec4(C,1);
+
+}
+
 IGLUApp* app;
+
+void testCPUBVHCulling()
+{
+	int n = 3;
+	//´´½¨°üÎ§ºÐ
+	vector<Object* > boxes(n);
+	for( int i = 0; i < n; ++i )
+	{
+		float x = -45 + rand()%100;
+		float z = -45 + rand()%100;
+		vec3 min,max;
+		min[0] = x - 5;
+		min[1] = -5;
+		min[2] = z - 5;
+		max[0] = x + 5;
+		max[1]= 5;
+		max[2] = z + 5;		
+		boxes[i] =  new Box(min,max,i);
+	}
+	
+	BVH bvh(&boxes);
+
+	IGLUMatrix4x4 pm = IGLUMatrix4x4::Perspective(45.0,4.0/3.0,0.1,100);
+	IGLUMatrix4x4 vm = IGLUMatrix4x4::LookAt(vec3(0,0,10),vec3(0,0,0),vec3(0,1,0));
+	Frustum frustum(pm,vm);
+	vector<int> passed;
+	bvh.frustumCulling(frustum,passed);
+
+	cout<<"total "<<n<<" in "<<passed.size();
+}
 void main()
 {
+	testCPUBVHCulling();
+	return;
+	//testTriFrustum();
 	//app = new GITestApp("../../CommonSampleFiles/scenes/nature.txt");
 
 	//app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
-	app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
+	//app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new TestApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
-	//app = new VFCIGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");
+	app = new VFCIGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");
 	//GLint  value;
 	//glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE,&value);
 	//printf("%d",value);
