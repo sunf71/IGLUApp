@@ -13,13 +13,13 @@ struct Object {
  const = 0; 
 
  //! Return an object normal based on an intersection
- virtual Vector3 getNormal(const IntersectionInfo& I) const = 0;
+ virtual vec3 getNormal(const IntersectionInfo& I) const = 0;
 
  //! Return a bounding box for this object
  virtual BBox getBBox() const = 0;
 
  //! Return the centroid for this object. (Used in BVH Sorting)
- virtual Vector3 getCentroid() const = 0;
+ virtual vec3 getCentroid() const = 0;
 };
 
 #endif

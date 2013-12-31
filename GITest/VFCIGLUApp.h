@@ -86,9 +86,9 @@ public :
 	}
 	void GetAABB(vec3& p1, vec3& p2, vec3& p3, BBox& aabox)
 	{
-		aabox = BBox(Vector3(p1.X(),p1.Y(),p1.Z()));
-		aabox.expandToInclude(Vector3(p2.X(),p2.Y(),p2.Z()));
-		aabox.expandToInclude(Vector3(p3.X(),p3.Y(),p3.Z()));
+		aabox = BBox(vec3(p1.X(),p1.Y(),p1.Z()));
+		aabox.expandToInclude(vec3(p2.X(),p2.Y(),p2.Z()));
+		aabox.expandToInclude(vec3(p3.X(),p3.Y(),p3.Z()));
 	}
 	void GetAABBs(IGLUOBJReader::Ptr & reader, IGLUMatrix4x4 & model);
 	//只需要更新reader的elements array

@@ -272,7 +272,7 @@ void VFCIGLUApp::Display()
 		_shaders[0]["lightColor"] = _lightColor;
 		
 		//FrustumCulling(frustum,_aabbs,idxs);
-		//FrustumCulling(frustum,_bboxs,idxs);
+		FrustumCulling(frustum,_bboxs,idxs);
 #ifdef _DEBUG
 		printf("total %d triangles, after frustum cull remain %d triangles\n",_bvh->NumOfPrims(),idxs.size());
 #endif

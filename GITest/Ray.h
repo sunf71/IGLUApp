@@ -1,15 +1,15 @@
 #ifndef Ray_h
 #define Ray_h
 
-#include "Vector3.h"
-
+#include "iglu.h"
+using namespace iglu;
 struct Ray {
- Vector3 o; // Ray Origin
- Vector3 d; // Ray Direction
- Vector3 inv_d; // Inverse of each Ray Direction component
+ vec3 o; // Ray Origin
+ vec3 d; // Ray Direction
+ vec3 inv_d; // Inverse of each Ray Direction component
 
- Ray(const Vector3& o, const Vector3& d)
- : o(o), d(d), inv_d(Vector3(1,1,1).cdiv(d)) { }
+ Ray(const vec3& o, const vec3& d)
+ : o(o), d(d), inv_d(d) { }
 };
 
 #endif

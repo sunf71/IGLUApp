@@ -281,7 +281,7 @@ void Test()
 		
 		vec3 p = random.RandomSphereVector();
 		objects.push_back(new Triangle(random.RandomSphereVector(),random.RandomSphereVector(),random.RandomSphereVector(),i));
-		//objects.push_back(new Sphere(Vector3(p.X(),p.Y(),p.Z()),Vector3(p.X(),p.Y(),p.Z()),Vector3(p.X(),p.Y(),p.Z())));
+		//objects.push_back(new Sphere(vec3(p.X(),p.Y(),p.Z()),vec3(p.X(),p.Y(),p.Z()),vec3(p.X(),p.Y(),p.Z())));
 	}
 	int start = 0;
 	int end = objects.size();
@@ -292,9 +292,9 @@ void Test()
 		bc.expandToInclude(objects[p]->getCentroid());
 	}
 	BVH  bvh(&objects);
-	Vector3 p1(10.9272740,2.957242,2.3705871);
-	Vector3 p2(10.927240,3.1498971,2.0491750);
-	Vector3 min = ::min(p1,p2);
+	vec3 p1(10.9272740,2.957242,2.3705871);
+	vec3 p2(10.927240,3.1498971,2.0491750);
+	vec3 min = Min(p1,p2);
 }
 
 void testTriFrustum()
@@ -324,7 +324,7 @@ IGLUApp* app;
 
 void testCPUBVHCulling()
 {
-	int n = 3;
+	int n = 100;
 	//´´½¨°üÎ§ºÐ
 	vector<Object* > boxes(n);
 	for( int i = 0; i < n; ++i )
@@ -337,18 +337,29 @@ void testCPUBVHCulling()
 		min[2] = z - 5;
 		max[0] = x + 5;
 		max[1]= 5;
-		max[2] = z + 5;		
+		max[2] = z + 5;	
+		cout<<i<<min[0]<<" "<<min[1]<<" "<<min[2]<<endl;
+		cout<<" "<<max[0]<<" "<<max[1]<<" "<<max[2]<<endl;
 		boxes[i] =  new Box(min,max,i);
 	}
-	
-	BVH bvh(&boxes);
-
 	IGLUMatrix4x4 pm = IGLUMatrix4x4::Perspective(45.0,4.0/3.0,0.1,100);
 	IGLUMatrix4x4 vm = IGLUMatrix4x4::LookAt(vec3(0,0,10),vec3(0,0,0),vec3(0,1,0));
 	Frustum frustum(pm,vm);
-	vector<int> passed;
-	bvh.frustumCulling(frustum,passed);
+	cout<<"brute force"<<endl;
+	for(int i=0; i<n; i++)
+	{
+		if( frustum.ContainsBox(*(Box*)boxes[i]) != Out)
+			cout<<i<<endl;
+	}
+	cout<<endl;
+	BVH bvh(&boxes);
 
+
+	vector<int> passed;
+	
+	bvh.frustumCullingBox(frustum,passed);
+	for(int i=0; i<passed.size(); i++)
+		cout<<passed[i]<<endl;
 	cout<<"total "<<n<<" in "<<passed.size();
 }
 void main()
@@ -361,7 +372,7 @@ void main()
 	//app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new TestApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
-	app = new VFCIGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");
+	app = new VFCIGLUApp("../../CommonSampleFiles/scenes/sponza.txt");
 	//GLint  value;
 	//glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE,&value);
 	//printf("%d",value);

@@ -97,7 +97,6 @@
     <ClInclude Include="TestApp.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="TriangleVector.hpp" />
-    <ClInclude Include="Vector3.h" />
     <ClInclude Include="BBoxVector.hpp" />
     <ClInclude Include="VFCIGLUApp.h" />
   </ItemGroup>

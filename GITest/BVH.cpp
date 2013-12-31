@@ -175,7 +175,70 @@ void BVH::frustumCulling(Frustum& frustum, std::vector<int>& passedIdx) const
 	}
 }
 
+void BVH::frustumCullingBox(Frustum& frustum, std::vector<int>& passedIdx) const
+{
+	//Working set
+	BVHTraversal todo[64];
+	int32_t stackptr = 0;
 
+	// "Push" on the root node to the working set
+	todo[stackptr].i = 0;
+	//todo[stackptr].mint = -9999999.f;
+
+	while(stackptr>=0) {
+		// Pop off the next node to work on.
+		int ni = todo[stackptr].i;
+		float near = todo[stackptr].mint;
+		stackptr--;
+		const BVHFlatNode &node(flatTree[ ni ]);
+
+	
+		//added by sunf, if the node's bbox is not intersected by the ray, continue
+		//float h1,h2;
+		if ( frustum.ContainsBBox(flatTree[ni].bbox) == Out )
+		 continue;
+
+		// Is leaf -> Intersect
+		if( node.rightOffset == 0 ) {
+			for(uint32_t o=0;o<node.nPrims;++o) {
+				const Object* obj = (*build_prims)[node.start+o];
+				Box* tri = (Box*)obj;
+				if (frustum.ContainsBox(*tri) != Out)
+					passedIdx.push_back(tri->getId());
+			}
+
+		} else { // Not a leaf
+
+			CullingResult hitc0 = frustum.ContainsBBox(flatTree[ni+1].bbox);
+			CullingResult hitc1 = frustum.ContainsBBox(flatTree[ni+node.rightOffset].bbox);
+
+			if (hitc0 == Intersect)
+				todo[++stackptr] = BVHTraversal(ni+1, 0);
+			else if(hitc0 == In)
+			{
+				//所有节点都输出
+				for(uint32_t o=0;o<flatTree[ni+1].nPrims;++o) 
+				{
+					const Object* obj = (*build_prims)[flatTree[ni+1].start+o];					
+					Box* tri = (Box*)obj;
+					passedIdx.push_back(tri->getId());
+				}
+			}
+			if (hitc1 == Intersect)
+				todo[++stackptr] = BVHTraversal(ni+node.rightOffset, 0);
+			else if(hitc1 == In)
+			{
+				//所有节点都输出
+				for(uint32_t o=0;o<flatTree[ni+node.rightOffset].nPrims;++o) 
+				{
+					const Object* obj = (*build_prims)[flatTree[ni+node.rightOffset].start+o];					
+					Box* tri = (Box*)obj;
+					passedIdx.push_back(tri->getId());
+				}
+			}
+		}
+	}
+}
 BVH::~BVH() {
  delete[] flatTree;
 }

@@ -1,55 +1,55 @@
 #include "BBox.h"
 #include <algorithm>
 
-Vector3 minV(const Vector3& p1, const Vector3& p2)
+vec3 minV(const vec3& p1, const vec3& p2)
 {
 	float minx,miny,minz;
-	minx = p1.x < p2.x ? p1.x : p2.x;
-	miny = p1.y < p2.y ? p1.y : p2.y;
-	minz = p1.z < p2.z ? p1.z : p2.z;
-	return Vector3(minx,miny,minz);
+	minx = p1.X() < p2.X() ? p1.X() : p2.X();
+	miny = p1.Y() < p2.Y() ? p1.Y() : p2.Y();
+	minz = p1.Z() < p2.Z() ? p1.Z() : p2.Z();
+	return vec3(minx,miny,minz);
 }
-Vector3 maxV(const Vector3& p1, const Vector3& p2)
+vec3 maxV(const vec3& p1, const vec3& p2)
 {
 	float maxx,maxy,maxz;
-	maxx = p1.x > p2.x ? p1.x : p2.x;
-	maxy = p1.y > p2.y ? p1.y : p2.y;
-	maxz = p1.z > p2.z ? p1.z : p2.z;
-	return Vector3(maxx,maxy,maxz);
+	maxx = p1.X() > p2.X() ? p1.X() : p2.X();
+	maxy = p1.Y() > p2.Y() ? p1.Y() : p2.Y();
+	maxz = p1.Z() > p2.Z() ? p1.Z() : p2.Z();
+	return vec3(maxx,maxy,maxz);
 }
 
-BBox::BBox(const Vector3& min, const Vector3& max)
+BBox::BBox(const vec3& min, const vec3& max)
 : min(min), max(max) { extent = max - min; }
 
-BBox::BBox(const Vector3& p)
+BBox::BBox(const vec3& p)
 : min(p), max(p) { extent = max - min; }
  
-void BBox::expandToInclude(const Vector3& p) {
- min = ::min(min, p);
- max = ::max(max, p);
+void BBox::expandToInclude(const vec3& p) {
+	min = Min(min, p);
+ max = Max(max, p);
 	//min = minV(min,p);
 	//max = maxV(max,p);
-	//extent.x = max.x-min.x;
-	//extent.y = max.y-min.y;
-	//extent.z = max.z-min.z;
+	//extent.X() = max.X()-min.X();
+	//extent.Y() = max.Y()-min.Y();
+	//extent.Z() = max.Z()-min.Z();
  extent = max - min;
 }
 
 void BBox::expandToInclude(const BBox& b) {
- min = ::min(min, b.min);
- max = ::max(max, b.max);
+ min = Min(min, b.min);
+ max = Max(max, b.max);
  extent = max - min;
 }
 
 uint32_t BBox::maxDimension() const {
  uint32_t result = 0;
- if(extent.y > extent.x) result = 1;
- if(extent.z > extent.y) result = 2;
+ if(extent.Y() > extent.X()) result = 1;
+ if(extent.Z() > extent.Y()) result = 2;
  return result;
 }
 
 float BBox::surfaceArea() const {
- return 2.f*( extent.x*extent.z + extent.x*extent.y + extent.y*extent.z );
+ return 2.f*( extent.X()*extent.Z() + extent.X()*extent.Y() + extent.Y()*extent.Z() );
 }
 
 // http://www.flipcode.com/archives/SSE_RayBox_Intersection_Test.shtml
@@ -69,8 +69,8 @@ __declspec(align(16)) static const float
 	ps_cst_plus_inf[4]	= {  flt_plus_inf,  flt_plus_inf,  flt_plus_inf,  flt_plus_inf },
 		ps_cst_minus_inf[4]	= { -flt_plus_inf, -flt_plus_inf, -flt_plus_inf, -flt_plus_inf };
 bool BBox::intersect(const Ray& ray, float *tnear, float *tfar) const {
-	//Vector3 minv(min);
-	//Vector3 maxv(max);
+	//vec3 minv(min);
+	//vec3 maxv(max);
 	// you may already have those values hanging around somewhere
 	const __m128
 		plus_inf	= loadps(ps_cst_plus_inf),

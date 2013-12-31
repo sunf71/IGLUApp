@@ -29,7 +29,7 @@ class BVH {
 public:
  BVH(std::vector<Object*>* objects, uint32_t leafSize=4);
  bool getIntersection(const Ray& ray, IntersectionInfo *intersection, bool occlusion) const ;
-
+ void frustumCullingBox(Frustum& frustum, std::vector<int>& passedIdx) const;
  void frustumCulling(Frustum& frustum, std::vector<int>& passedIdx) const;
  int NumOfPrims()
  {

@@ -51,9 +51,6 @@
     <ClInclude Include="Ray.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="BVHFlatNodeVector.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
