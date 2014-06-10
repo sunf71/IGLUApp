@@ -23,7 +23,7 @@ GIMApp::~GIMApp()
 	_instanceDatum.clear();
 	
 }
-void GIMApp::InitBufferOld()
+void OGIMApp::InitBuffer()
 {
 	IGLUOBJReader::Ptr _mirrorMesh = _objReaders[_mirrorId];
 	//保存镜面的法线和点
@@ -103,8 +103,8 @@ void GIMApp::InitBufferOld()
 }
 void GIMApp::InitBuffer()
 {	
-	InitBufferOld();
-	return;
+	//InitBufferOld();
+	//return;
 	IGLUOBJReader::Ptr _mirrorMesh = _objReaders[_mirrorId];
 	//保存镜面的法线和点
 	int TriNum = _mirrorMesh->GetTriangleCount();	
@@ -396,7 +396,7 @@ int GIMApp::UpdateMirrorVAO()
 		return 0;
 	}
 }
-void GIMApp::InitShadersOld()
+void OGIMApp::InitShaders()
 {
 	_objShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/object.vert.glsl","../../CommonSampleFiles/shaders/object.frag.glsl");
 	_objShader->SetProgramEnables( IGLU_GLSL_DEPTH_TEST | IGLU_GLSL_BLEND); 
@@ -410,8 +410,8 @@ void GIMApp::InitShadersOld()
 }
 void GIMApp::InitShaders()
 {
-	InitShadersOld();
-	return;
+	//InitShadersOld();
+	//return;
 	_objShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/object.vert.glsl","../../CommonSampleFiles/shaders/object.frag.glsl");
 	_objShader->SetProgramEnables( IGLU_GLSL_DEPTH_TEST | IGLU_GLSL_BLEND); 
 
@@ -422,6 +422,12 @@ void GIMApp::InitShaders()
 	_mirrorTexShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/mirrorTexture.vert.glsl","../../CommonSampleFiles/shaders/mirrorTexture.frag.glsl");
 
 	_simpleShader = new IGLUShaderProgram("../../CommonSampleFiles/shaders/simple.vert.glsl","../../CommonSampleFiles/shaders/simple.frag.glsl");
+
+	_shaders.push_back(_objShader);
+	_shaders.push_back(_mirrorShader);
+	_shaders.push_back(_giShader);
+	_shaders.push_back(_mirrorTexShader);
+	_shaders.push_back(_simpleShader);
 }
 void GIMApp::DisplayFrustum(Frustum& frustum)
 {
@@ -433,8 +439,8 @@ void GIMApp::DisplayFrustum(Frustum& frustum)
 }
 void GIMApp::Display()
 {	
-	DisplayOld();	
-	return;
+	//DisplayOld();	
+//	return;
 	// Clear the screen
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
@@ -582,7 +588,7 @@ void GIMApp::Display()
 }
 
 
-void GIMApp::DisplayOld()
+void OGIMApp::Display()
 {
 
 	_frameRate->StartFrame();
@@ -652,13 +658,14 @@ void GIMApp::DisplayOld()
 		{
 			if (i != _mirrorId)
 			{
+				/*视锥体裁剪
 				Frustum frustum = _vFrustums[0];
 				vector<int> idxs;
 				_bvh->frustumCulling(frustum,idxs);
 				if (idxs.size() ==0)
 					continue;
 				printf("%d total %d remain\n",_objReaders[i]->GetTriangleCount(),idxs.size());
-				UpdateReader(idxs,_objReaders[i]);
+				UpdateReader(idxs,_objReaders[i]);*/
 
 				_giShader["model"]           = _objTransforms[i];				
 				glDisable(GL_CULL_FACE);//镜面绘制禁用背面剔除
@@ -774,4 +781,47 @@ void GIMApp::CreateVirtualFrustum(vec3& p1, vec3& normal, Frustum& vfrustum)
 	}
 	float nearZ = (vEye - inter).Length();
 	vfrustum = Frustum(vEye,vAt,_camera->GetUp(),_camera->GetFovY(),_camera->GetNear(),_camera->GetFar(),_camera->GetAspectRatio());
+}
+void OGIMApp::InitScene()
+{
+	for (int i=0; i<_sceneData->getObjects().size(); i++)
+	{
+		SceneObject* obj = _sceneData->getObjects()[i];
+		switch (obj->getType())
+		{
+		case SceneObjType::mesh:
+			{
+				ObjModelObject* mesh = (ObjModelObject*)obj;
+				//GLMmodel* model = glmReadOBJ(mesh->getObjFileName().c_str());
+				IGLUOBJReader::Ptr objReader;
+				
+				objReader = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(), IGLU_OBJ_UNITIZE);
+		
+				
+				//IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( model,IGLU_OBJ_COMPACT_STORAGE);
+				_objReaders.push_back(objReader);
+				glm::mat4 trans = (mesh->getTransform());					
+				IGLUMatrix4x4 model(&trans[0][0]);
+				_objTransforms.push_back(model);
+				if (!obj->getMaterialName().compare("mirror"))
+				{
+					_mirrorId = _objReaders.size()-1;		
+					_mirrorTransform = _objTransforms[_objTransforms.size()-1];
+				}
+				else
+				{
+					//目前只支持一个obj模型
+					GetAABBs(objReader,model);
+				}
+				//delete model;
+				break;
+			}
+		default:
+			break;
+		}
+	}
+	// We've loaded all our materials, so prepare to use them in rendering
+	IGLUOBJMaterialReader::FinalizeMaterialsForRendering(IGLU_TEXTURE_REPEAT);
+
+	InitBuffer();
 }

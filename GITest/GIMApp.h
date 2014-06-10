@@ -12,6 +12,10 @@ struct InstanceData
 	vec4 position;
 	vec4 normal;
 };
+
+
+//new version of GI based reflection on iglu
+//use gpu buffer and ssbo counter
 class GIMApp : public IGLUApp
 {
 public:
@@ -24,10 +28,10 @@ public:
 	virtual void InitScene();
 	virtual void InitShaders();
 	virtual void Display();
-	void DisplayOld();
-	void InitShadersOld();
+	//void DisplayOld();
+	//void InitShadersOld();
 	void InitBuffer();
-	void InitBufferOld();
+	//void InitBufferOld();
 	//更新vao的element array，只绘制正面的镜面
 	int UpdateMirrorVAO();
 	void GetAABBs(IGLUOBJReader::Ptr &reader, IGLUMatrix4x4& model);
@@ -38,7 +42,7 @@ public:
 	//根据镜面p,normal创建虚视锥vfrustum;
 	void CreateVirtualFrustum(vec3& p, vec3& normal, Frustum& vfrustum);
 	void DisplayFrustum(Frustum& frustum);
-private:
+protected:
 	IGLUShaderProgram::Ptr _mirrorShader;
 	IGLUShaderProgram::Ptr _giShader;
 	IGLUShaderProgram::Ptr _objShader;
@@ -72,6 +76,17 @@ private:
 	BVH * _bvh;
 };
 
-
+//GI based reflection on iglu
+//older version
+class OGIMApp : public GIMApp
+{
+public:
+	OGIMApp(const char* fileName):GIMApp(fileName)
+	{}
+	virtual void InitScene();
+	virtual void InitShaders();
+	virtual void Display();
+	void InitBuffer();
+};
 
 #endif

@@ -99,6 +99,7 @@
     <ClInclude Include="TriangleVector.hpp" />
     <ClInclude Include="BBoxVector.hpp" />
     <ClInclude Include="VFCIGLUApp.h" />
+    <ClInclude Include="VirtualFrustumTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BBox.cpp" />
@@ -110,12 +111,14 @@
     <ClCompile Include="GITest.cpp" />
     <ClCompile Include="IGLUApp.cpp" />
     <ClCompile Include="SceneHelper.cpp" />
+    <ClCompile Include="VirtualFrustumTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CommonSampleFiles\scenes\cityIsland.txt" />
     <None Include="..\CommonSampleFiles\scenes\cornell.txt" />
     <None Include="..\CommonSampleFiles\scenes\nature.txt" />
     <None Include="..\CommonSampleFiles\scenes\sponza.txt" />
+    <None Include="..\CommonSampleFiles\scenes\virtualFrustum.txt" />
     <None Include="..\CommonSampleFiles\shaders\cull.gs" />
     <None Include="..\CommonSampleFiles\shaders\cull.vs" />
     <None Include="..\CommonSampleFiles\shaders\gi.frag.glsl" />

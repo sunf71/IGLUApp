@@ -5,7 +5,7 @@ void Frustum::CreateVAO()
 	vec3 dir = _at-_eye;
 	dir.Normalize();
 	vec3 right = dir.Cross(_up);
-    float tanHFov = tan(_fovy / 2/180.0*3.1415926);
+    float tanHFov = tan(_fovy / 2/180.0*IGLU_PI);
 	float Hnear = tanHFov * _near;
 	float Wnear = Hnear * _aspectRatio;
 	float Hfar =  tanHFov * _far;

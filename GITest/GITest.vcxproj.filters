@@ -78,6 +78,9 @@
     <ClInclude Include="IGLUMathHelper.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="VirtualFrustumTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IGLUApp.cpp">
@@ -105,6 +108,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VirtualFrustumTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -210,6 +216,9 @@
     </None>
     <None Include="..\CommonSampleFiles\shaders\simple.vert.glsl">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\scenes\virtualFrustum.txt">
+      <Filter>Scenes</Filter>
     </None>
   </ItemGroup>
 </Project>

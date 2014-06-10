@@ -11,6 +11,7 @@ uniform vec3 FogColor;
 struct Instance
 {
    vec4 Position;
+  
 };
 const int MaxSize = 65536/16;
 uniform InstanceData

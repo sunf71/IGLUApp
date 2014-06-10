@@ -384,6 +384,7 @@ Light::Light(FILE* f)
 
 ObjModelObject::ObjModelObject(char* name, FILE* f)
 {
+	_unitizeFlag = false;
 	glm::mat4 m = glm::translate(glm::mat4(1.0),glm::vec3(5,0,0));
 	glm::vec4 a(1.0,0.0,0.0,1.0);
 	a = m*a;
@@ -437,8 +438,15 @@ ObjModelObject::ObjModelObject(char* name, FILE* f)
 				glm::vec3 scale = parseVec3(ptr);
 				_transform *= glm::scale(glm::mat4(1.f),scale);
 			}
-		}
 			
+		}
+		else if(!strcmp(token,"unitize"))
+		{
+			ptr = StripLeadingTokenToBuffer( ptr, token );
+			MakeLower( token );
+			if (!strcmp(token,"true"))
+				_unitizeFlag = true;
+		}
 	}
 }
 

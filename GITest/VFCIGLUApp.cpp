@@ -224,7 +224,7 @@ void VFCIGLUApp::InitScene()
 			{
 				ObjModelObject* mesh = (ObjModelObject*)obj;
 				
-				IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(),IGLU_OBJ_UNITIZE);
+				IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str());
 				_objReaders.push_back(objReader);
 				glm::mat4 trans = mesh->getTransform();				
 				IGLUMatrix4x4 model = IGLUMatrix4x4(&trans[0][0]);

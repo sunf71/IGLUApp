@@ -139,15 +139,21 @@ void IGLUApp::InitScene()
 		{
 		case SceneObjType::mesh:
 			{
-				ObjModelObject* mesh = (ObjModelObject*)obj;
-				GLMmodel* model = glmReadOBJ(mesh->getObjFileName().c_str());
-				IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( model, IGLU_OBJ_UNITIZE);
-				//IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(),IGLU_OBJ_COMPACT_STORAGE);
+				ObjModelObject* mesh = (ObjModelObject*)obj;				
+				IGLUOBJReader::Ptr objReader;
+				if (mesh->getUnitizeFlag())
+				{
+					objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(), IGLU_OBJ_UNITIZE);
+				
+				}
+				else
+				{
+					objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(),IGLU_OBJ_COMPACT_STORAGE);
+				}
 				_objReaders.push_back(objReader);
-				glm::mat4 trans = mesh->getTransform();
-			/*	std::cout<< trans;*/
+				glm::mat4 trans = mesh->getTransform();			
 				_objTransforms.push_back(IGLUMatrix4x4(&trans[0][0]));				
-				delete model;
+				
 				break;
 			}
 		default:

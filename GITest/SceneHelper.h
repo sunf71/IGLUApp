@@ -115,6 +115,7 @@ public:
 		:_objFileName(objFileName),SceneObject(objName,trans)
 	{
 		_type = SceneObjType::mesh;
+		_unitizeFlag = false;
 	}
 	ObjModelObject(char* name, FILE* f);
 
@@ -123,7 +124,16 @@ public:
 	{
 		return _objFileName;
 	}
+	bool getUnitizeFlag()
+	{
+		return _unitizeFlag;
+	}
+	void setUnitize(bool flag)
+	{
+		_unitizeFlag = flag;
+	}
 private:
+	bool _unitizeFlag;
 	std::string _objFileName;
 };
 

@@ -9,10 +9,15 @@
 #include "triangle.h"
 #include "BVH.h"
 #include "Frustum.h"
+#include "VirtualFrustumTest.h"
 #define NUM_TREES				10000
-#define NUM_GRASS				80*80
+#define NUM_GRASS				64*64
 
-
+struct InstancePosition
+{
+	InstancePosition():position(vec4(0,0,0,1)){}
+	vec4  position;
+};
 
 class GITestApp : public IGLUApp
 {
@@ -33,6 +38,7 @@ private:
 	IGLUBuffer::Ptr _grassUB;
 	int _numOfInstance;
 	InstanceData * _instanceData;
+	InstancePosition * _instancePosition;
 	// The transform feedback OpenGL ID.  
 	IGLUTransformFeedback::Ptr _feedback;
 	IGLUBuffer::Ptr _feedbackBuffer;
@@ -94,24 +100,26 @@ private:
 		_grassUB = new IGLUBuffer(IGLU_UNIFORM);		
 
 		// Copy the data into the buffer
-		_grassUB->SetBufferData( NUM_GRASS*sizeof(InstanceData), _instanceData, iglu::IGLU_STATIC | iglu::IGLU_DRAW );
+		_grassUB->SetBufferData( NUM_GRASS*sizeof(InstancePosition), _instancePosition, iglu::IGLU_STATIC | iglu::IGLU_DRAW );
 		_grassUB->Unbind();
 	}
 	void InitTexture()
 	{
 		_grassBuffer = new IGLUBuffer();			
-		_grassBuffer->SetBufferData(sizeof(InstanceData)*NUM_GRASS,_instanceData);			
+		_grassBuffer->SetBufferData(sizeof(InstancePosition)*NUM_GRASS,_instancePosition);			
 		_grassTexBuffer = new IGLUTextureBuffer();
 		_grassTexBuffer->BindBuffer(GL_RGBA32F,_grassBuffer);
 	}
 	void InitInstanceData()
 	{
 		_instanceData = new InstanceData[NUM_GRASS];		
+		_instancePosition = new InstancePosition[NUM_GRASS];
 		int size = (int)sqrt((float)NUM_GRASS);
 		for (int i=0; i<size; i++) {
 			for (int j=0; j<size; j++) {
 				_instanceData[i+j*size].position = vec4( (i-size/2)*4.0f+random(-0.05,0.05), -5.5f, (j-size/2)*4.0f+random(-0.05,0.05), 0.0f );
 				_instanceData[i+j*size].normal = vec4(1,0,0,0);
+				_instancePosition[i+j*size].position = _instanceData[i+j*size].position;
 				}
 		}
 		InitIGLUBuffer();
@@ -150,6 +158,7 @@ public:
 		delete _grassBuffer;
 		delete _grassTexBuffer;
 		delete[] _instanceData;
+		delete[] _instancePosition;
 		delete _feedback;
 		delete _feedbackBuffer;
 	}
@@ -174,7 +183,7 @@ public:
 	}
 	void DisplayVA()
 	{
-		_dtTime += 0.1;
+		_dtTime += 0.001;
 		/*UpdateBuffer();*/
 		_shaders[0]->Enable();
 
@@ -206,6 +215,7 @@ public:
 		int uniformBlkIdx = glGetUniformBlockIndex( _shaders[2]->GetProgramID(), "InstanceData" );
 		 glBindBufferBase( GL_UNIFORM_BUFFER, uniformBlkIdx, _grassUB->GetBufferID() );
 		_objReaders[0]->DrawMultipleInstances(_shaders[2], NUM_GRASS);
+		//_objReaders[0]->Draw(_shaders[2]);
 		_shaders[2]->Disable();
 	}
 	void DisplayGSCull()
@@ -364,13 +374,15 @@ void testCPUBVHCulling()
 }
 void main()
 {
-	testCPUBVHCulling();
-	return;
+	/*testCPUBVHCulling();
+	return;*/
 	//testTriFrustum();
 	//app = new GITestApp("../../CommonSampleFiles/scenes/nature.txt");
 
 	//app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
+	//app= new OGIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
+	//app = new VirtualFrustumApp("../../CommonSampleFiles/scenes/virtualFrustum.txt");
 	//app= new TestApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	app = new VFCIGLUApp("../../CommonSampleFiles/scenes/sponza.txt");
 	//GLint  value;
