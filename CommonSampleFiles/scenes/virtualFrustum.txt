@@ -5,7 +5,7 @@ camera pinhole
      at 0 0 0
 	  fovy 60
 	  near 3
-	  far  200
+	  far  2000
 	  res 512 512
 	  trackball
 end
@@ -20,8 +20,12 @@ light point
 	#trackball 0
 end
 
-object mesh obj sphere
-		file ../../CommonSampleFiles/models/dragon.obj		
+object mesh obj plane
+		file ../../CommonSampleFiles/models/plane.obj		
+end
+
+object mesh obj cow
+		file ../../CommonSampleFiles/models/cow.obj		
 end
 
 

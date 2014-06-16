@@ -25,9 +25,9 @@ public:
 		m1 = p[0];
 		m2 = p[1];
 		m3 = p[2];
-		vpt = v1 * vp1 + v2 * vp2 + v3 * vp3;
+		vpt = dir.Dot(normal);
 		//首先判断直线是否与平面平行
-		if (vpt == 0)
+		if (fabs(vpt) < IGLU_ZERO)
 		{
 			return false;
 		}
@@ -57,9 +57,9 @@ public:
 		m1 = p[0];
 		m2 = p[1];
 		m3 = p[2];
-		vpt = v1 * vp1 + v2 * vp2 + v3 * vp3;
+		vpt = dir.Dot(normal);
 		//首先判断直线是否与平面平行
-		if (vpt == 0)
+		if (fabs(vpt) < IGLU_ZERO)
 		{
 			return false;
 		}

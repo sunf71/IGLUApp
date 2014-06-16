@@ -9,14 +9,7 @@
 #include <vector>
 #include "Camera.h"
 #include "SceneHelper.h"
-template<typename T> void safe_delete(T*& a) 
-{
-	if ( a != NULL)
-	{
-		delete a;
-		a = NULL;
-	}
-}
+
 using namespace iglu;
 
 //callbacks

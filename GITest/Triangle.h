@@ -9,7 +9,7 @@ private:
 	int _id;	
 	vec3 _center;
 public:
-	Triangle();
+	Triangle(){}
 	vec3 p1,p2,p3;
 	Triangle(const vec3& v1, const vec3& v2, const vec3& v3,int id)
 	{
@@ -23,6 +23,8 @@ public:
 	}
 	Triangle(const vec3& v1, const vec3& v2, const vec3& v3):p1(v1),p2(v2),p3(v3)
 	{
+		vec3 center = (v1 + v2 + v3)/3;
+		_center = vec3(center.X(),center.Y(),center.Z());
 	}
 
 	virtual bool getIntersection(

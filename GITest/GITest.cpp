@@ -382,9 +382,9 @@ void main()
 	//app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new OGIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
-	//app = new VirtualFrustumApp("../../CommonSampleFiles/scenes/virtualFrustum.txt");
+	app = new VirtualFrustumApp("../../CommonSampleFiles/scenes/virtualFrustum.txt");
 	//app= new TestApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
-	app = new VFCIGLUApp("../../CommonSampleFiles/scenes/sponza.txt");
+	//app = new VFCIGLUApp("../../CommonSampleFiles/scenes/sponza.txt");
 	//GLint  value;
 	//glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE,&value);
 	//printf("%d",value);

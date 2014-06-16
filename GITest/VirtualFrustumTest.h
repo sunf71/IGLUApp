@@ -28,20 +28,29 @@ public:
 		_vfar = 195;
 		_vfovy = 60;
 		_vFrustum = new Frustum(_veye,_vat,_vup,_vfovy,_vnear,_vfar,realCam->GetAspectRatio());
-		CreateVirtualFrustum(vec3(0,0,0),vec3(0,1,0),vec3(1,1,0),*_vFrustum);
-	
+		//CreateVirtualFrustum(vec3(0,0,0),vec3(0,1,0),vec3(1,1,0),*_vFrustum);
+		/*Triangle tri(vec3(-1,0,0),vec3(1,0,0),vec3(0,1,0));
+		_tFrustum = TriFrustum(vec3(0,0,10),tri,100);*/
+		
+
 	};
 	~VirtualFrustumApp()
 	{
 		safe_delete(_vFrustum);
+		_tFrustumVec.clear();
 	};
 	virtual void InitShaders();
 	virtual void Display();
+	//根据镜面和虚视点创建虚视锥
+	void GenVirtualFrustum();
 	//根据镜面三角形(p1,p2,p3)创建虚视锥vfrustum;
 	void CreateVirtualFrustum(vec3& p1, vec3& p2, vec3& p3, Frustum& vfrustum);
 	//根据镜面p,normal创建虚视锥vfrustum;
 	void CreateVirtualFrustum(vec3& p, vec3& normal, Frustum& vfrustum);
 	void DisplayFrustum(Frustum& frustum);
+	//只需要更新reader的elements array
+	void UpdateReader( vector<int>& idxs, IGLUOBJReader::Ptr &reader);
+	virtual void InitScene();
 private:
 	IGLUShaderProgram::Ptr _objShader;
 	IGLUShaderProgram::Ptr _simpleShader;
@@ -53,6 +62,6 @@ private:
 	float _vnear;
 	float _vfar;
 	Frustum* _vFrustum;
-	
+	vector<TriFrustum*> _tFrustumVec;
 };
 #endif

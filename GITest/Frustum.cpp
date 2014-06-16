@@ -63,3 +63,21 @@ void Frustum::Draw()
 		CreateVAO();
 	_vao->DrawElements(GL_LINES,32);
 }
+
+void TriFrustum::CreateVAO()
+{
+	_vao = new IGLUVertexArray();
+	_vao->SetVertexArray(sizeof(float)*21,_points);
+
+	uint elements[] = {0,1, 0,2, 0,3, 1,2, 2,3, 3,1, 2,5, 1,4, 3,6, 4,5, 5,6, 6,4};
+	//uint elements[] = {1,2, 2,4, 4,3, 3,1};
+	_vao->SetElementArray(GL_UNSIGNED_INT,sizeof(elements)*sizeof(uint),elements);
+	_vao->EnableAttribute(0,3,GL_FLOAT,3*sizeof(float),0);
+}
+
+void TriFrustum::Draw()
+{
+	if(_vao == NULL)
+		CreateVAO();
+	_vao->DrawElements(GL_LINES,24);
+}
