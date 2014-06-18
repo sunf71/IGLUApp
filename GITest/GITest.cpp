@@ -18,7 +18,13 @@ struct InstancePosition
 	InstancePosition():position(vec4(0,0,0,1)){}
 	vec4  position;
 };
-
+struct DrawArraysIndirectCommand
+{
+    GLuint  count;
+    GLuint  primCount;
+    GLuint  first;
+    GLuint  baseInstance;
+};
 class GITestApp : public IGLUApp
 {
 public:
@@ -122,9 +128,9 @@ private:
 				_instancePosition[i+j*size].position = _instanceData[i+j*size].position;
 				}
 		}
-		InitIGLUBuffer();
+		//InitIGLUBuffer();
 		//InitTexture();
-		//InitUniformBuffer();
+		InitUniformBuffer();
 		//InitTransformFeedback();
 	
 	}
@@ -271,9 +277,9 @@ public:
 		// Clear the screen
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
-		//DisplayUniform();
+		DisplayUniform();
 		//DisplayTexture();
-		DisplayVA();
+		//DisplayVA();
 		//DisplayGSCull();
 		// Draw the framerate on the screen
 		char buf[32];
@@ -379,10 +385,10 @@ void main()
 	//testTriFrustum();
 	//app = new GITestApp("../../CommonSampleFiles/scenes/nature.txt");
 
-	//app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
+	app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new OGIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
-	app = new VirtualFrustumApp("../../CommonSampleFiles/scenes/virtualFrustum.txt");
+	//app = new VirtualFrustumApp("../../CommonSampleFiles/scenes/virtualFrustum.txt");
 	//app= new TestApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app = new VFCIGLUApp("../../CommonSampleFiles/scenes/sponza.txt");
 	//GLint  value;

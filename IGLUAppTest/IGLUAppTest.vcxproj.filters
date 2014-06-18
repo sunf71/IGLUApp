@@ -21,20 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IGLUApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneHelper.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="IGLUApp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneHelper.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="IGLUAppTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

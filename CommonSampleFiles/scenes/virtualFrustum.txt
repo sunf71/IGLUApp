@@ -21,7 +21,7 @@ light point
 end
 
 object mesh obj plane
-		file ../../CommonSampleFiles/models/plane.obj		
+		file ../../CommonSampleFiles/models/testbox.obj		
 end
 
 object mesh obj cow

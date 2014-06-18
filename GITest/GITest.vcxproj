@@ -83,16 +83,13 @@
     <ClInclude Include="BBox.h" />
     <ClInclude Include="BVH.h" />
     <ClInclude Include="BVHFlatNodeVector.hpp" />
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GIMApp.h" />
-    <ClInclude Include="IGLUApp.h" />
     <ClInclude Include="IntersectionInfo.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="IGLUMathHelper.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Ray.h" />
-    <ClInclude Include="SceneHelper.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="TestApp.h" />
     <ClInclude Include="Triangle.h" />
@@ -109,8 +106,6 @@
     <ClCompile Include="TestApp.cpp" />
     <ClCompile Include="VFCIGLUApp.cpp" />
     <ClCompile Include="GITest.cpp" />
-    <ClCompile Include="IGLUApp.cpp" />
-    <ClCompile Include="SceneHelper.cpp" />
     <ClCompile Include="VirtualFrustumTest.cpp" />
   </ItemGroup>
   <ItemGroup>

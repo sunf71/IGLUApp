@@ -21,12 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IGLUApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneHelper.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Frustum.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -66,9 +60,6 @@
     <ClInclude Include="Sphere.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GIMApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -83,12 +74,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="IGLUApp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneHelper.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="GITest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

@@ -120,6 +120,7 @@ void VirtualFrustumApp::GenVirtualFrustum()
 		}
 		
 	}
+	std::cout<<"frustum size "<<_tFrustumVec.size()<<std::endl;
 		
 }
 void  CullingObjReader(TriFrustum* frustum, IGLUOBJReader::Ptr reader, vector<int>& idx)

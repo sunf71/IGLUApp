@@ -1,8 +1,9 @@
 #include "IGLUApp.h"
+IGLUApp * app;
 void main()
 {
 
-	IGLUApp::GetSingleton().InitScene("cornell.txt");
-	IGLUApp::GetSingleton().Run();
+	app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
+	app->Run();
 	
 }

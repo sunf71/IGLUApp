@@ -80,13 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="IGLUApp.h" />
-    <ClInclude Include="SceneHelper.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="IGLUApp.cpp" />
     <ClCompile Include="IGLUAppTest.cpp" />
-    <ClCompile Include="SceneHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Debug\cornell.txt" />
