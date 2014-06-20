@@ -72,6 +72,9 @@
     <ClInclude Include="VirtualFrustumTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="IndirectDrawApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GITest.cpp">
@@ -96,6 +99,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VirtualFrustumTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="IndirectDrawApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -204,6 +210,12 @@
     </None>
     <None Include="..\CommonSampleFiles\scenes\virtualFrustum.txt">
       <Filter>Scenes</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\indirect.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\indirect.vert.glsl">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

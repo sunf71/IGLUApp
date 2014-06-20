@@ -10,6 +10,7 @@
 #include "BVH.h"
 #include "Frustum.h"
 #include "VirtualFrustumTest.h"
+#include "IndirectDrawApp.h"
 #define NUM_TREES				10000
 #define NUM_GRASS				64*64
 
@@ -18,13 +19,7 @@ struct InstancePosition
 	InstancePosition():position(vec4(0,0,0,1)){}
 	vec4  position;
 };
-struct DrawArraysIndirectCommand
-{
-    GLuint  count;
-    GLuint  primCount;
-    GLuint  first;
-    GLuint  baseInstance;
-};
+
 class GITestApp : public IGLUApp
 {
 public:
@@ -112,7 +107,7 @@ private:
 	void InitTexture()
 	{
 		_grassBuffer = new IGLUBuffer();			
-		_grassBuffer->SetBufferData(sizeof(InstancePosition)*NUM_GRASS,_instancePosition);			
+		_grassBuffer->SetBufferData(sizeof(InstanceData)*NUM_GRASS, _instanceData);			
 		_grassTexBuffer = new IGLUTextureBuffer();
 		_grassTexBuffer->BindBuffer(GL_RGBA32F,_grassBuffer);
 	}
@@ -128,13 +123,13 @@ private:
 				_instancePosition[i+j*size].position = _instanceData[i+j*size].position;
 				}
 		}
-		//InitIGLUBuffer();
+		InitIGLUBuffer();
 		//InitTexture();
-		InitUniformBuffer();
+		//InitUniformBuffer();
 		//InitTransformFeedback();
 	
 	}
-
+	
 public:
 	virtual void InitScene()
 	{
@@ -277,9 +272,9 @@ public:
 		// Clear the screen
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
-		DisplayUniform();
+		//DisplayUniform();
 		//DisplayTexture();
-		//DisplayVA();
+		DisplayVA();
 		//DisplayGSCull();
 		// Draw the framerate on the screen
 		char buf[32];
@@ -336,7 +331,7 @@ void testTriFrustum()
 
 }
 
-IGLUApp* app;
+iglu::IGLUApp* app;
 
 void testCPUBVHCulling()
 {
@@ -384,8 +379,8 @@ void main()
 	return;*/
 	//testTriFrustum();
 	//app = new GITestApp("../../CommonSampleFiles/scenes/nature.txt");
-
-	app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
+	app = new IndirectDrawApp("../../CommonSampleFiles/scenes/nature.txt");
+	//app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new OGIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app = new VirtualFrustumApp("../../CommonSampleFiles/scenes/virtualFrustum.txt");

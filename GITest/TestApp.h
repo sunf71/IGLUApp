@@ -2,7 +2,7 @@
 #define TESTAPP_H
 
 #include "IGLUApp.h"
-
+using namespace iglu;
 
 class TestApp : public IGLUApp
 {

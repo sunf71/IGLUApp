@@ -85,6 +85,7 @@
     <ClInclude Include="BVHFlatNodeVector.hpp" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GIMApp.h" />
+    <ClInclude Include="IndirectDrawApp.h" />
     <ClInclude Include="IntersectionInfo.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="IGLUMathHelper.h" />
@@ -103,6 +104,7 @@
     <ClCompile Include="BVH.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GIMApp.cpp" />
+    <ClCompile Include="IndirectDrawApp.cpp" />
     <ClCompile Include="TestApp.cpp" />
     <ClCompile Include="VFCIGLUApp.cpp" />
     <ClCompile Include="GITest.cpp" />
@@ -120,6 +122,8 @@
     <None Include="..\CommonSampleFiles\shaders\gi.vert.glsl" />
     <None Include="..\CommonSampleFiles\shaders\giU.vert.glsl" />
     <None Include="..\CommonSampleFiles\shaders\giVA.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\indirect.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\indirect.vert.glsl" />
     <None Include="..\CommonSampleFiles\shaders\mirrorTexture.frag.glsl" />
     <None Include="..\CommonSampleFiles\shaders\mirrorTexture.vert.glsl" />
     <None Include="..\CommonSampleFiles\shaders\normal.fs" />
