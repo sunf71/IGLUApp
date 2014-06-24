@@ -379,11 +379,11 @@ void main()
 	return;*/
 	//testTriFrustum();
 	//app = new GITestApp("../../CommonSampleFiles/scenes/nature.txt");
-	app = new IndirectDrawApp("../../CommonSampleFiles/scenes/nature.txt");
+	//app = new IndirectDrawApp("../../CommonSampleFiles/scenes/nature.txt");
 	//app= new IGLUApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new GIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app= new OGIMApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
-	//app = new VirtualFrustumApp("../../CommonSampleFiles/scenes/virtualFrustum.txt");
+	app = new VirtualFrustumApp("../../CommonSampleFiles/scenes/virtualFrustum.txt");
 	//app= new TestApp("../../CommonSampleFiles/scenes/cityIsland.txt");	
 	//app = new VFCIGLUApp("../../CommonSampleFiles/scenes/sponza.txt");
 	//GLint  value;

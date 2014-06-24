@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GITest", "GITest\GITest.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CudaIGLU", "CudaIGLU\CudaIGLU.vcxproj", "{9F6DD552-ACB7-4D0B-9FEF-E92A8B532579}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VirObjReflection", "VirObjReflection\VirObjReflection.vcxproj", "{60675989-E8CD-4663-8FFF-26A0712AA8D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -59,6 +61,14 @@ Global
 		{9F6DD552-ACB7-4D0B-9FEF-E92A8B532579}.Release|Win32.Build.0 = Release|Win32
 		{9F6DD552-ACB7-4D0B-9FEF-E92A8B532579}.Release|x64.ActiveCfg = Release|x64
 		{9F6DD552-ACB7-4D0B-9FEF-E92A8B532579}.Release|x64.Build.0 = Release|x64
+		{60675989-E8CD-4663-8FFF-26A0712AA8D7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{60675989-E8CD-4663-8FFF-26A0712AA8D7}.Debug|Win32.Build.0 = Debug|Win32
+		{60675989-E8CD-4663-8FFF-26A0712AA8D7}.Debug|x64.ActiveCfg = Debug|x64
+		{60675989-E8CD-4663-8FFF-26A0712AA8D7}.Debug|x64.Build.0 = Debug|x64
+		{60675989-E8CD-4663-8FFF-26A0712AA8D7}.Release|Win32.ActiveCfg = Release|Win32
+		{60675989-E8CD-4663-8FFF-26A0712AA8D7}.Release|Win32.Build.0 = Release|Win32
+		{60675989-E8CD-4663-8FFF-26A0712AA8D7}.Release|x64.ActiveCfg = Release|x64
+		{60675989-E8CD-4663-8FFF-26A0712AA8D7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

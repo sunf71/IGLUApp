@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="VORApp.cpp" />
+    <ClCompile Include="BVH\glmModel.cpp">
+      <Filter>BVH</Filter>
+    </ClCompile>
+    <ClCompile Include="BVH\timer.cpp">
+      <Filter>BVH</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="VORAPP.h" />
+    <ClInclude Include="CudaFunctions.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="BVH\bbox.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\Bbox_inline.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\bvh.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\cuda_klbvh.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\cuda_klbvh_inline.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\frustum.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\frustum_inline.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\glmModel.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\MortonCode.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\numbers.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\timer.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\types.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\vector.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="BVH\vector_inline.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\CommonSampleFiles\scenes\cityIsland.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\scenes\cornell.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\scenes\nature.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\scenes\sponza.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\scenes\virObjRef.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\scenes\virtualFrustum.txt">
+      <Filter>Scenes</Filter>
+    </None>
+    <None Include="BVH\GpuTimer.cuh">
+      <Filter>BVH</Filter>
+    </None>
+    <None Include="BVH\klbvhKernel.cuh">
+      <Filter>BVH</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="kernel.cu" />
+    <CudaCompile Include="CudaFuntions.cu" />
+    <CudaCompile Include="BVH\cuda_klbvh_test.cu">
+      <Filter>BVH</Filter>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{d4adbbdb-62d5-4fdf-bcd0-5e249e856d29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BVH">
+      <UniqueIdentifier>{1223bbc1-88da-4ba7-82c4-f3b7f9044d6c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
