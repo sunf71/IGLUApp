@@ -13,9 +13,9 @@ namespace OGL
 		{}
 		~VORApp()
 		{
-			_tFrustumVec.clear();
+			
 		}
-		void CreateVirtualFrustums();
+		void VirtualFrustumsCulling();
 		virtual void InitScene();
 
 		virtual void InitShaders();
@@ -24,7 +24,8 @@ namespace OGL
 	private:
 		std::vector<IGLUOBJReader::Ptr> _mirrorObjs;
 		std::vector<IGLUMatrix4x4> _mirrorTransforms;
-		vector<nih::TriFrustum*> _tFrustumVec;
+		//三角形总数量
+		size_t _triSize;
 	};
 }
 

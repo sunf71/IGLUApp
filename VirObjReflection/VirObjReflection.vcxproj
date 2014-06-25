@@ -187,6 +187,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="CudaFunctions.h">
       <FileType>Document</FileType>
     </ClInclude>
+    <None Include="BVH\cuda_klbvh.cuh" />
     <None Include="BVH\GpuTimer.cuh" />
     <None Include="BVH\klbvhKernel.cuh" />
   </ItemGroup>

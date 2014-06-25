@@ -81,6 +81,9 @@
     <None Include="BVH\klbvhKernel.cuh">
       <Filter>BVH</Filter>
     </None>
+    <None Include="BVH\cuda_klbvh.cuh">
+      <Filter>BVH</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />

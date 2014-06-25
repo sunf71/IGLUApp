@@ -4,9 +4,10 @@ namespace OGL
 {
 	using namespace iglu;
 
-	void VORApp::CreateVirtualFrustums()
+	void VORApp::VirtualFrustumsCulling()
 	{
-		cuda::GenVirtualFrustums(&_mirrorObjs[0],&_mirrorTransforms[0],_mirrorObjs.size());
+		vec3 eye = GetCamera()->GetEye();
+		cuda::VirtualFrustumCulling(_triSize,eye,150,&_mirrorObjs[0],&_mirrorTransforms[0],_mirrorObjs.size());
 	}
 	void VORApp::InitScene()
 	{
@@ -53,7 +54,8 @@ namespace OGL
 		// We've loaded all our materials, so prepare to use them in rendering
 		IGLUOBJMaterialReader::FinalizeMaterialsForRendering(IGLU_TEXTURE_REPEAT);
 
-		cuda::BuildBvh(&_objReaders[0], &_objTransforms[0], _objReaders.size());
+		_triSize = cuda::BuildBvh(&_objReaders[0], &_objTransforms[0], _objReaders.size());
+		
 	}
 
 	void VORApp::InitShaders()
@@ -63,7 +65,7 @@ namespace OGL
 
 	void VORApp::Display()
 	{
-
+		VirtualFrustumsCulling();
 		IGLUApp::Display();
 	}
 }

@@ -21,11 +21,10 @@ light point
 end
 
 object mesh obj grass
-		file ../../CommonSampleFiles/models/testbox.obj	
+		file ../../CommonSampleFiles/models/grass.obj	
 		#matrix translate 3.5 2.5 2
 		#matrix translate 0 1.5 0
 		#matrix scale .5 .5 .5	
 		#matrix rotate 180  0 1 0	
 		#material mirror
-		unitize true
 end

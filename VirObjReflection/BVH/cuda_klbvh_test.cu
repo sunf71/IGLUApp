@@ -6,15 +6,15 @@
 #include <thrust/device_vector.h>
  #include <thrust/count.h>
 #include <thrust/execution_policy.h>
-
+#include "cuda_klbvh.cuh"
 #include <algorithm>
 #include <cstdlib>
 
 #include "gputimer.cuh"
 #include "timer.h"
 using namespace nih;
-int globalCounter = 0;
-texture<float> BboxTex;
+
+
 texture<uint32> bvhTex;
 struct bvhTexHelper
 {
@@ -67,51 +67,7 @@ struct bvhTexHelper
 	}
 };
 
-struct cullingContext
-{
-	NIH_HOST_DEVICE cullingContext()
-	{
-		triId = uint32(-1);
-	}
-	
-	
-	uint32 frustumId;
-	uint32 triId;
-};
-struct is_Triangle
-{
-	NIH_HOST_DEVICE is_Triangle(uint32 id):_id(id)
-	{}
-	NIH_HOST_DEVICE bool operator()(const cullingContext& c)
-	{
-		return c.triId == _id;
-	}
-	uint32 _id;
-};
-struct is_Frustum
-{
-	NIH_HOST_DEVICE is_Frustum(uint32 id):_id(id){}
-	NIH_HOST_DEVICE bool operator()(const cullingContext& c)
-	{
-		return c.frustumId == _id;
-	}
-	uint32 _id;
-};
-struct is_valid
-{
-	static const  uint32 invalid = uint32(-1);
-	NIH_HOST_DEVICE bool operator()(const cullingContext& c)
-	{
-		return c.triId != invalid;
-	}
-};
-struct is_frustum
-{
-	NIH_HOST_DEVICE bool operator()(const TriFrustum& c)
-	{
-		return c.id != uint32(-1);
-	}
-};
+
 
 
 NIH_DEVICE bool AABBOverlap(Bbox3f& boxA, Bbox3f& boxB)
@@ -125,186 +81,8 @@ NIH_DEVICE bool AABBOverlap(Bbox3f& boxA, Bbox3f& boxB)
 	return false;
 }
 
-FORCE_INLINE NIH_DEVICE void FrustumCulling(pyrfrustum_t& frustum, uint32 frustumId,
-	cuda::DBVH* bvh,uint32 priSize,
-	cullingContext* list)
-{
-	Bvh_Node* stack[64];
-	uint32 top = 0;
-	stack[top++] = bvh->getRoot();
-	uint32 offset = priSize*frustumId;
-	while(top>0)
-	{
-		Bvh_Node* node = stack[--top];
-		Bbox3f box = bvh->getNodeBox(node);
-		
-		int ret = Intersect(frustum, box);
-		if (ret == 2)
-		{
-			//相交
-			if (node->l_isleaf)
-			{
-				Bvh_Node* leaf = (bvh->getLLeafChild(node));
-				Bbox3f box = bvh->getLeafBox(leaf);
-				if (Intersect(frustum,box))
-				{
-					list[offset+leaf->pid].frustumId = frustumId;
-					list[offset+leaf->pid].triId = leaf->pid;
-				}				
-			}
-			else
-				stack[top++] = bvh->getLChild(node);
-			if(node->r_isleaf)
-			{
-				Bvh_Node* leaf = (bvh->getRLeafChild(node));
-				Bbox3f box = bvh->getLeafBox(leaf);
-				if (Intersect(frustum,box))
-				{
-					list[offset+leaf->pid].frustumId = frustumId;
-					list[offset+leaf->pid].triId = leaf->pid;
-				}				
-			}
-			else
-				stack[top++] =  bvh->getRChild(node);
-		}
-		else if (ret == 1)
-		{
-			//in
-			for(int k= node->leafStart; k<=node->leafEnd;k++)
-			{
-				list[offset+bvh->leaves[k].pid].frustumId = frustumId;
-				list[offset+bvh->leaves[k].pid].triId =bvh->leaves[k].pid;
-			}
-		}
-	}
-}
-FORCE_INLINE NIH_DEVICE void FrustumCulling(pyrfrustum_t& frustum, uint32 frustumId,
-	Bintree* bvh,uint32 priSize,
-	cullingContext* out)
-{
-	uint32 offset = priSize*frustumId;
-	const uint32 stack_size  = 64;
-	uint32 stack[stack_size];
-	uint32 top = 0;
-	stack[top++] = 0;
-	while(top>0)
-	{
-		uint32 idx = stack[--top];		
-		int ret = Intersect(frustum,bvh->boxPtr[idx]);
-		if (ret == 2)
-		{
-			//相交
-			
-			if(bvh->isLeafPtr[bvh->RChildPtr[idx]])
-			{
-				if (Intersect(frustum,bvh->boxPtr[bvh->RChildPtr[idx]]))
-				{
-					out[offset+bvh->pidPtr[bvh->RChildPtr[idx]]].frustumId = frustumId;
-					out[offset+bvh->pidPtr[bvh->RChildPtr[idx]]].triId = bvh->pidPtr[bvh->RChildPtr[idx]];				
-				}				
-			}
-			else
-				stack[top++] = bvh->RChildPtr[idx];
-
-			if (bvh->isLeafPtr[bvh->LChildPtr[idx]])
-			{
-				
-				if (Intersect(frustum,bvh->boxPtr[bvh->LChildPtr[idx]]))
-				{
-					out[offset+bvh->pidPtr[bvh->LChildPtr[idx]]].frustumId = frustumId;
-					out[offset+bvh->pidPtr[bvh->LChildPtr[idx]]].triId = bvh->pidPtr[bvh->LChildPtr[idx]];
-				}				
-			}
-			else
-				stack[top++] = bvh->LChildPtr[idx];
-		}
-		else if (ret == 1)
-		{
-			//in
-			for(int k= bvh->leafStartPtr[idx]; k<=bvh->leafEndPtr[idx];k++)
-			{
-				out[offset+bvh->pidPtr[k]].frustumId = frustumId;
-				out[offset+bvh->pidPtr[k]].triId = bvh->pidPtr[k];
-			}
-			
-		}
-	}
-}
-FORCE_INLINE NIH_DEVICE void FrustumCulling(pyrfrustum_t& frustum, uint32 frustumId,
-	Bintree_Node* bvh,uint32 priSize,
-	cullingContext* out)
-{
-	uint32 offset = priSize*frustumId;
-	const uint32 stack_size  = 64;
-	Bintree_Node* stack[stack_size];
-	Bintree_Node** stackPtr = stack;
-	*stackPtr++ = NULL;
-	Bintree_Node* node = &bvh[0];
-	do
-    {
-        // Check each child node for overlap.
-		Bintree_Node* childL = &bvh[node->lChild];
-		Bintree_Node* childR = &bvh[node->RChild];
-        int overlapL = ( Intersect(frustum, 
-			node->lBox) );
-        int overlapR = ( Intersect(frustum, 
-			node->rBox) );
-
-        // Query overlaps a leaf node => report collision.
-		if (overlapL && bvh[node->lChild].isLeaf())
-		{
-			out[offset + bvh[node->lChild].leafStart].frustumId = frustumId; 
-			out[offset + bvh[node->lChild].leafStart].triId = bvh[node->lChild].leafStart;
-		}
-
-		if (overlapR && bvh[node->RChild].isLeaf())
-		{
-			out[offset + bvh[node->RChild].leafStart].frustumId = frustumId;
-			out[offset + bvh[node->RChild].leafStart].triId = bvh[node->RChild].leafStart;
-		}
-		
-        // Query overlaps an internal node => traverse.
-        bool traverseL = false;
-		if (overlapL == 1)
-		{
-			for(int k= childL->leafStart; k<=childL->leafEnd; k++)
-			{	
-				out[offset + k].frustumId = frustumId;
-				out[offset + k].triId = k;
-			}
-		}
-		else if( overlapL == 2 && !bvh[node->lChild].isLeaf())
-		{
-			traverseL = true;
-		}
-        bool traverseR = false;
-		if (overlapR == 1)
-		{
-			for(int k= childR->leafStart; k<=childR->leafEnd; k++)
-			{
-				out[offset + k].frustumId = frustumId;
-				out[offset + k].triId = k;
-
-			}
-		}
-		else if( overlapR == 2 && !bvh[node->RChild].isLeaf())
-		{
-			traverseR = true;
-		}
-
-        if (!traverseL && !traverseR)
-            node = *--stackPtr; // pop
-        else
-        {
-            node = (traverseL) ? childL : childR;
-            if (traverseL && traverseR)
-                *stackPtr++ = childR; // push
-        }
-    }
-    while (node != NULL);
-}
-FORCE_INLINE NIH_DEVICE void FrustumCulling(pyrfrustum_t& frustum, uint32 frustumId,
-	Bintree_node* bvh,uint32 priSize,
+FORCE_INLINE NIH_DEVICE void FrustumCulling(TriFrustum& frustum, uint32 frustumId,
+	uint32 priSize,
 	cullingContext* out)
 {
 	bvhTexHelper helper;
@@ -363,73 +141,17 @@ FORCE_INLINE NIH_DEVICE void FrustumCulling(pyrfrustum_t& frustum, uint32 frustu
 	}
 }
 
-__global__ void BruteforceFrustumCullingKernel(pyrfrustum_t* frustum, Bbox3f* boxes, uint32 priSize,cullingContext* list)
-{
-	uint32 step = blockDim.x * gridDim.x;
-	for (int i = blockIdx.x * blockDim.x + threadIdx.x; 
-		i < priSize; 
-		i += step) 
-	{
-		int offset = i*6;
-		float p[6];
-		p[0] = tex1Dfetch(BboxTex,offset);
-		p[1] = tex1Dfetch(BboxTex,offset+1);
-		p[2] = tex1Dfetch(BboxTex,offset+2);
-		p[3] = tex1Dfetch(BboxTex,offset+3);
-		p[4] = tex1Dfetch(BboxTex,offset+4);
-		p[5] = tex1Dfetch(BboxTex,offset+5);
-		
-	
-		if (Intersect(*frustum,p) >0 )
-			list[i].triId = i;
-	}
-}
-__global__ void FrustumCullingKernel(pyrfrustum_t* frustumP, int frustum_num, Bintree_Node* bvh, uint32 priSize,cullingContext* list)
-{
-	uint32 step = blockDim.x * gridDim.x;
-	for (int i = blockIdx.x * blockDim.x + threadIdx.x; 
-		i < frustum_num; 
-		i += step) 
-	{
-		pyrfrustum_t frustum = frustumP[i];
-		FrustumCulling(frustum,i,bvh,priSize,list);
-		//FrustumCullingT(frustum,i,bvh,priSize,list);
-	}
-}
-__global__ void FrustumCullingKernel(pyrfrustum_t* frustumP, int frustum_num, Bintree_node* bvh, uint32 priSize,cullingContext* list)
-{
-	uint32 step = blockDim.x * gridDim.x;
-	for (int i = blockIdx.x * blockDim.x + threadIdx.x; 
-		i < frustum_num; 
-		i += step) 
-	{
-		pyrfrustum_t frustum = frustumP[i];
-		FrustumCulling(frustum,i,bvh,priSize,list);
-		//FrustumCullingT(frustum,i,bvh,priSize,list);
-	}
-}
-__global__ void FrustumCullingKernel(pyrfrustum_t* frustumP, int frustum_num, Bintree* bvh, uint32 priSize,cullingContext* list)
-{
-	uint32 step = blockDim.x * gridDim.x;
-	for (int i = blockIdx.x * blockDim.x + threadIdx.x; 
-		i < frustum_num; 
-		i += step) 
-	{
-		pyrfrustum_t frustum = frustumP[i];
-		FrustumCulling(frustum,i,bvh,priSize,list);
-		//FrustumCullingT(frustum,i,bvh,priSize,list);
-	}
-}
 
-__global__ void FrustumCullingKernel(pyrfrustum_t* frustumP, int frustum_num, cuda::DBVH* bvh, uint32 priSize,cullingContext* list)
+__global__ void FrustumCullingKernel(TriFrustum* frustumP, int frustum_num, uint32 priSize,cullingContext* list)
 {
 	uint32 step = blockDim.x * gridDim.x;
 	for (int i = blockIdx.x * blockDim.x + threadIdx.x; 
 		i < frustum_num; 
 		i += step) 
 	{
-		pyrfrustum_t frustum = frustumP[i];
-		FrustumCulling(frustum,i,bvh,priSize,list);
+		TriFrustum frustum = frustumP[i];
+		FrustumCulling(frustum,i,priSize,list);
+		//FrustumCullingT(frustum,i,bvh,priSize,list);
 	}
 }
 
@@ -461,14 +183,14 @@ void NIH_HOST_DEVICE GenerateVirFrustum(uint32 id, const Vector3f& eye,const Vec
 }
 
 //虚视锥生成kernel
-__global__ void GenerateVirFrustumKernel(Vector3f eye,Vector3f* p123, TriFrustum* frustums,float farD, int count)
+__global__ void GenerateVirFrustumKernel(Vector3f* eye,Vector3f* p123, TriFrustum* frustums,float farD, int count)
 {
 	uint32 step = blockDim.x * gridDim.x;
 	for (int i = blockIdx.x * blockDim.x + threadIdx.x; 
 		i < count; 
 		i += step) 
 	{
-		GenerateVirFrustum(i,eye,p123[i*3],p123[i*3+1],p123[i*3+2],farD,frustums[i]);
+		GenerateVirFrustum(i,*eye,p123[i*3],p123[i*3+1],p123[i*3+2],farD,frustums[i]);
 		
 	}
 }

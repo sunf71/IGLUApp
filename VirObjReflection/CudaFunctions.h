@@ -11,9 +11,12 @@ namespace cuda
 		thrust::device_vector<nih::Bbox3f>& Bboxes,
 		nih::Bbox3f& gBox);
 
-	//创建BVH，结果保存在纹理中
-	void BuildBvh(iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t size);
+	//创建BVH，结果保存在全局纹理中，返回总三角形数
+	size_t BuildBvh(iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t size);
 
 	//创建虚视锥
-	void GenVirtualFrustums(iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t size);
+	void GenVirtualFrustums(iglu::vec3& eye, float farD, iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t size);
+
+	//创建虚视锥并裁剪
+	void VirtualFrustumCulling(size_t triSize,iglu::vec3& eye, float farD, iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t objSize);
 }

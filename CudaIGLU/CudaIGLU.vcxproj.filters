@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="GpuIndirectDraw.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GpuIndirectDrawApp.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="kernel.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{8883c5dc-725f-4aba-bd72-91e2e26e4f56}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\CommonSampleFiles\shaders\cull.gs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\cull.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\gi.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\gi.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\giU.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\giVA.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\indirect.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\indirect.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\mirrorTexture.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\mirrorTexture.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normal.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normal.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normalT.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normalT.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normalU.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normalU.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\object.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\object.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\simple.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\simple.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.geom.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuildingO.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuildingO.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\test.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\test.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\testm.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\testm.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\toArray.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\toArray.geom.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\toArray.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -21,11 +21,11 @@ namespace OGL
 		prop.minor = 0;
 		cudaChooseDevice(&dev, &prop);
 		cudaGLSetGLDevice(dev);
-
-		glGenBuffers(1, &indirect_draw_buffer);
-		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirect_draw_buffer);
-		glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(DrawElementsIndirectCommand) * NUM_DRAWS, NULL, GL_STATIC_DRAW);
-		cudaGraphicsGLRegisterBuffer(&resource, indirect_draw_buffer, cudaGraphicsMapFlagsNone);
+		_indirectDrawBuffer = new IGLUBuffer(IGLU_DRAW_INDIRECT);		
+		_indirectDrawBuffer->SetBufferData(NUM_DRAWS * sizeof(DrawElementsIndirectCommand),
+			NULL,IGLU_DYNAMIC);
+		_indirectDrawBuffer->Bind();
+		cudaGraphicsGLRegisterBuffer(&resource, _indirectDrawBuffer->GetBufferID(), cudaGraphicsMapFlagsNone);
 
 		
 		InitAttribute();
@@ -75,11 +75,12 @@ namespace OGL
 	}
 	void GpuIndirectDrawApp::InitDrawElementCommand()
 	{
-		glGenBuffers(1, &indirect_draw_buffer);
-		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirect_draw_buffer);
-
-
-		DrawElementsIndirectCommand * cmd = new DrawElementsIndirectCommand[NUM_DRAWS];
+		_indirectDrawBuffer = new IGLUBuffer(IGLU_DRAW_INDIRECT);
+		_indirectDrawBuffer->Bind();
+		_indirectDrawBuffer->SetBufferData(NUM_DRAWS * sizeof(DrawElementsIndirectCommand),
+			NULL);
+		DrawElementsIndirectCommand * cmd = (DrawElementsIndirectCommand *)_indirectDrawBuffer->Map(IGLU_WRITE);	
+				
 		GLuint count = _objReaders[0]->GetTriangleCount()*3;
 		GLuint vcount = _objReaders[0]->GetVertecies().size();
 		for (unsigned i = 0; i < NUM_DRAWS; i++)
@@ -91,32 +92,21 @@ namespace OGL
 			cmd[i].baseVertex = 0;
 		}
 
-		glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(DrawElementsIndirectCommand) * NUM_DRAWS, cmd, GL_STATIC_DRAW);
-
-		delete[] cmd;
+		_indirectDrawBuffer->Unmap();
+		_indirectDrawBuffer->Bind();
 
 		glBindVertexArray(_objReaders[0]->GetVertexArray()->GetArrayID());
 
-		glGenBuffers(1, &draw_index_buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, draw_index_buffer);
-		glBufferData(GL_ARRAY_BUFFER,
-			NUM_DRAWS * sizeof(GLuint),
-			NULL,
-			GL_STATIC_DRAW);
-
-		GLuint * draw_index =
-			(GLuint *)glMapBufferRange(GL_ARRAY_BUFFER,
-			0,
-			NUM_DRAWS * sizeof(GLuint),
-			GL_MAP_WRITE_BIT |
-			GL_MAP_INVALIDATE_BUFFER_BIT);
-
+		_drawIndexBuffer = new IGLUBuffer();	
+		unsigned* draw_index = new unsigned[NUM_DRAWS];
 		for (unsigned i = 0; i < NUM_DRAWS; i++)
 		{
 			draw_index[i] = i;
 		}
+		_drawIndexBuffer->SetBufferData(NUM_DRAWS * sizeof(GLuint),draw_index,IGLU_STATIC|IGLU_DRAW);
+		delete[] draw_index;
 
-		glUnmapBuffer(GL_ARRAY_BUFFER);
+		_drawIndexBuffer->Bind();
 		glVertexAttribIPointer(10, 1, GL_UNSIGNED_INT, 0, NULL);
 		glVertexAttribDivisor(10, 1);
 		glEnableVertexAttribArray(10);
@@ -143,18 +133,11 @@ namespace OGL
 	}
 	void GpuIndirectDrawApp::InitDrawArrayCommand()
 	{
-		glGenBuffers(1, &indirect_draw_buffer);
-		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirect_draw_buffer);
-		glBufferData(GL_DRAW_INDIRECT_BUFFER,
-			NUM_DRAWS * sizeof(DrawArraysIndirectCommand),
-			NULL,
-			GL_STATIC_DRAW);
-
-		DrawArraysIndirectCommand * cmd = (DrawArraysIndirectCommand *)
-			glMapBufferRange(GL_DRAW_INDIRECT_BUFFER,
-			0,
-			NUM_DRAWS * sizeof(DrawArraysIndirectCommand),
-			GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+		_indirectDrawBuffer = new IGLUBuffer(IGLU_DRAW_INDIRECT);
+		_indirectDrawBuffer->Bind();
+		_indirectDrawBuffer->SetBufferData(NUM_DRAWS * sizeof(DrawArraysIndirectCommand),
+			NULL);
+		DrawArraysIndirectCommand * cmd = (DrawArraysIndirectCommand *)_indirectDrawBuffer->Map(IGLU_WRITE);	
 		GLuint count = _objReaders[0]->GetTriangleCount()*3;
 		for (unsigned i = 0; i < NUM_DRAWS; i++)
 		{
@@ -163,32 +146,21 @@ namespace OGL
 			cmd[i].primCount = 1;
 			cmd[i].baseInstance = i;
 		}
-
-		glUnmapBuffer(GL_DRAW_INDIRECT_BUFFER);
-
+		_indirectDrawBuffer->Unmap();
+		_indirectDrawBuffer->Bind();
 
 		glBindVertexArray(_objReaders[0]->GetVertexArray()->GetArrayID());
 
-		glGenBuffers(1, &draw_index_buffer);
-		glBindBuffer(GL_ARRAY_BUFFER, draw_index_buffer);
-		glBufferData(GL_ARRAY_BUFFER,
-			NUM_DRAWS * sizeof(GLuint),
-			NULL,
-			GL_STATIC_DRAW);
-
-		GLuint * draw_index =
-			(GLuint *)glMapBufferRange(GL_ARRAY_BUFFER,
-			0,
-			NUM_DRAWS * sizeof(GLuint),
-			GL_MAP_WRITE_BIT |
-			GL_MAP_INVALIDATE_BUFFER_BIT);
-
+		_drawIndexBuffer = new IGLUBuffer();	
+		unsigned* draw_index = new unsigned[NUM_DRAWS];
 		for (unsigned i = 0; i < NUM_DRAWS; i++)
 		{
 			draw_index[i] = i;
 		}
+		_drawIndexBuffer->SetBufferData(NUM_DRAWS * sizeof(GLuint),draw_index,IGLU_STATIC|IGLU_DRAW);
+		delete[] draw_index;
 
-		glUnmapBuffer(GL_ARRAY_BUFFER);
+		_drawIndexBuffer->Bind();
 		glVertexAttribIPointer(10, 1, GL_UNSIGNED_INT, 0, NULL);
 		glVertexAttribDivisor(10, 1);
 		glEnableVertexAttribArray(10);

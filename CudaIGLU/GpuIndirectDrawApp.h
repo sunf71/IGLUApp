@@ -40,8 +40,9 @@ namespace OGL
 			safe_delete( _grassBuffer);
 			safe_delete ( _grassTexBuffer);
 			safe_delete(_drawIndexBuffer);
+			safe_delete(_indirectDrawBuffer);
 			cudaGraphicsUnregisterResource( resource );
-			glDeleteBuffers( 1, &indirect_draw_buffer );
+			
 			
 		}
 		void InitCudaOGL();
@@ -64,8 +65,7 @@ namespace OGL
 		InstanceData* _instanceData;
 		IGLUBuffer::Ptr _grassBuffer;
 		IGLUTextureBuffer::Ptr _grassTexBuffer;
-		GLuint  indirect_draw_buffer;
-		GLuint  draw_index_buffer;
+		IGLUBuffer::Ptr _indirectDrawBuffer;		
 		IGLUBuffer::Ptr _drawIndexBuffer;
 		float _dtTime;
 		cudaGraphicsResource *resource;

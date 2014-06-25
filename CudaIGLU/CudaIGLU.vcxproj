@@ -155,6 +155,40 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   <ItemGroup>
     <ClCompile Include="GpuIndirectDraw.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\CommonSampleFiles\shaders\cull.gs" />
+    <None Include="..\CommonSampleFiles\shaders\cull.vs" />
+    <None Include="..\CommonSampleFiles\shaders\gi.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\gi.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\giU.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\giVA.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\indirect.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\indirect.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\mirrorTexture.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\mirrorTexture.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\normal.fs" />
+    <None Include="..\CommonSampleFiles\shaders\normal.vs" />
+    <None Include="..\CommonSampleFiles\shaders\normalT.fs" />
+    <None Include="..\CommonSampleFiles\shaders\normalT.vs" />
+    <None Include="..\CommonSampleFiles\shaders\normalU.fs" />
+    <None Include="..\CommonSampleFiles\shaders\normalU.vs" />
+    <None Include="..\CommonSampleFiles\shaders\object.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\object.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\simple.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\simple.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.geom.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\stencilBuildingO.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\stencilBuildingO.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\test.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\test.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\testm.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\testm.vert.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\toArray.frag.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\toArray.geom.glsl" />
+    <None Include="..\CommonSampleFiles\shaders\toArray.vert.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 5.5.targets" />
