@@ -2,6 +2,7 @@
 #include "CudaFunctions.h"
 namespace OGL
 {
+const size_t MaxELEMENT = 1024*1024*3;
 	using namespace iglu;
 	void VORApp::InitBuffer()
 	{
@@ -13,7 +14,7 @@ namespace OGL
 		
 		//实时更新的element buffer
 		_vElemBuffer= new IGLUBuffer(IGLU_ELEMENT_ARRAY);
-		_vElemBuffer->SetBufferData(sizeof(uint)*_triSize*3,NULL,IGLU_STREAM);
+		_vElemBuffer->SetBufferData(sizeof(uint)*MaxELEMENT,NULL,IGLU_STREAM);
 	}
 	void VORApp::InitOGLCuda()
 	{
@@ -48,10 +49,7 @@ namespace OGL
 	{
 		//更新虚物体索引buffer大小，并注册cuda互访问
 		uint* inPtr,*outPtr;
-		_vElemBuffer->Bind();
-		_vElemBuffer->SetBufferData(sizeof(uint)*size*3,NULL,IGLU_STREAM);
-		cudaGraphicsGLRegisterBuffer(&_elemSource, _vElemBuffer->GetBufferID(), cudaGraphicsMapFlagsNone);
-		_vElemBuffer->Unbind();
+		
 
 		//map 
 		size_t  bufferSize;

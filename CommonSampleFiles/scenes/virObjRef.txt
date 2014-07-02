@@ -21,7 +21,7 @@ light point
 end
 
 object mesh obj plane
-		file ../../CommonSampleFiles/models/cow.obj
+		file ../../CommonSampleFiles/models/sponza.obj
 		unitize true		
 end
 

@@ -10,6 +10,10 @@ texture<uint32> bvhTex;
 texture<uint32> indexTex;
 //裁剪后的虚物体，注意纹理数据需要保存在全局内存中
 texture<uint32> virObjTex;
+
+cullingContext* cullingResult;
+//创建bvh时排序后的图元序号
+uint32* gd_indices;
 void NIH_HOST_DEVICE GenerateVirFrustum(uint32 id, const Vector3f& eye,const Vector3f& p1,const Vector3f& p2, const Vector3f& p3, float farD, TriFrustum& frustum);
 
 __global__ void GenerateVirFrustumKernel(Vector3f* eye,Vector3f* p123, TriFrustum* frustums, float farD, int count);
@@ -236,8 +240,8 @@ namespace cuda
 		/*for(int i=0; i<size*3; i+=3)
 		std::cout<<indices[i]<<","<<indices[i+1]<<","<<indices[i+2]<<std::endl;*/
 		float* d_vertices;
-		cudaMalloc((void**)&d_vertices,sizeof(float)*3*vertSize);
-		cudaMemcpy(d_vertices,vertices,sizeof(float)*3*vertSize,cudaMemcpyHostToDevice);
+		cudaMalloc((void**)&d_vertices,sizeof(float)*vertSize);
+		cudaMemcpy(d_vertices,vertices,sizeof(float)*vertSize,cudaMemcpyHostToDevice);
 
 		uint32* d_indices;
 		cudaMalloc((void**)&d_indices,sizeof(uint32)*3*size);
@@ -383,7 +387,9 @@ namespace cuda
 		cudaBindTexture( NULL, bvhTex,
 			d_nbvh, sizeof(Bintree_node)*nbvh_size );
 
-		cudaBindTexture(NULL,indexTex,builder.getIndices(),sizeof(uint32)*size);
+		cudaMalloc((void**)&gd_indices,sizeof(uint32)*size);
+		cudaMemcpy(gd_indices,builder.getIndices(),sizeof(uint32)*size,cudaMemcpyDeviceToDevice);
+		cudaBindTexture(NULL,indexTex,gd_indices,sizeof(uint32)*size);
 		return size;
 	}
 	size_t VirtualFrustumCulling(size_t triSize,iglu::vec3& eye, float farD, iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t objSize,const unsigned int*inElemBuffer, unsigned int * outElemBuffer)
@@ -450,7 +456,7 @@ namespace cuda
 		
 		thrust::copy_if(d_vectorf.begin(),d_vectorf.end(),fresult.begin(),is_valid());
 
-		cullingContext* cullingResult = NULL;
+		//cullingContext* cullingResult = NULL;
 		cudaMalloc((void**)&cullingResult,sizeof(cullingContext)*inCount);
 		cudaMemcpy(cullingResult,thrust::raw_pointer_cast(&fresult.front()),sizeof(uint32)*inCount*2,cudaMemcpyDeviceToDevice);
 
@@ -468,6 +474,7 @@ namespace cuda
 
 		//UpdateElementKernel<<<n_blocks,128>>>(inElemBuffer,outElemBuffer,thrust::raw_pointer_cast(&fresult.front()),fresult.size());
 		cudaFree(d_eye);
+		//cudaFree(gd_indices);
 		delete[] offsets;
 
 		return fresult.size();
@@ -477,6 +484,7 @@ namespace cuda
 		size_t n_blocks = GridSize(size);
 
 		UpdateElementKernel<<<n_blocks,128>>>(inPtr,outPtr,NULL,size);
+		cudaFree(cullingResult);
 	}
 	void GenVirtualFrustums(iglu::vec3& eye, float farD, iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t objSize)
 	{
