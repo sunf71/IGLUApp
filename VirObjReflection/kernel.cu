@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 
-
 iglu::IGLUApp* app;
 int main()
 {

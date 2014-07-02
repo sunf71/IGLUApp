@@ -110,7 +110,7 @@ namespace nih
 			for(int i = 0; i < 8; ++i) {
 
 				// test this point against the planes
-				if(planeDistance( box[i], f.planes[p] ) <= 0 ) {
+				if(planeDistance( box[i], f.planes[p] ) > 0 ) {
 					iPtIn = 0;
 					--iInCount;
 				}

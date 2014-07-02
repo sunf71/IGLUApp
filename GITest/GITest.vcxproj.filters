@@ -217,5 +217,8 @@
     <None Include="..\CommonSampleFiles\shaders\indirect.vert.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\CommonSampleFiles\scenes\virObjRef.txt">
+      <Filter>Scenes</Filter>
+    </None>
   </ItemGroup>
 </Project>

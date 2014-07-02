@@ -40,6 +40,6 @@ struct is_frustum
 {
 	__host__ __device__ bool operator()(const TriFrustum& c)
 	{
-		return c.id != uint32(-1);
+		return c.id == uint32(-1);
 	}
 };

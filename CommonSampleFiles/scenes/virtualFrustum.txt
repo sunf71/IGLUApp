@@ -25,7 +25,8 @@ object mesh obj plane
 end
 
 object mesh obj cow
-		file ../../CommonSampleFiles/models/cow.obj		
+		file ../../CommonSampleFiles/models/cow.obj	
+		unitize
 end
 
 

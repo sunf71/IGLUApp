@@ -101,9 +101,9 @@ bool VirtualEye(const vec3& eye, const vec3& p1, const vec3& p2, const vec3& p3,
 void VirtualFrustumApp::GenVirtualFrustum()
 {
 	//ÐéÊÓµã
-	vec3 eye(-10,0,0);
+	vec3 eye(-5,0,0);
 	vec3 virEye;
-	float far = 100;
+	float far = 150;
 	IGLUOBJReader::Ptr reader = _objReaders[0];
 	int total = reader->GetTriangleCount();
 	_tFrustumVec.reserve(total);
@@ -126,14 +126,20 @@ void VirtualFrustumApp::GenVirtualFrustum()
 void  CullingObjReader(TriFrustum* frustum, IGLUOBJReader::Ptr reader, vector<int>& idx)
 {
 	size_t size = reader->GetTriangles().size();
-
+	vector<float> vaoVerts = reader->GetVaoVerts();
+	uint* vaoIndex = reader->GetElementArrayData();
 	idx.reserve(size);
 	for(int i=0; i<size; i++)
 	{
-		vector<vec3>& vertices = reader->GetVertecies();
+		/*vector<vec3>& vertices = reader->GetVertecies();
 		Triangle triangle(vertices[reader->GetTriangles()[i]->vIdx[0]],
 			vertices[reader->GetTriangles()[i]->vIdx[1]],
-			vertices[reader->GetTriangles()[i]->vIdx[2]]);
+			vertices[reader->GetTriangles()[i]->vIdx[2]]);*/
+		vec3 p0(&(vaoVerts[vaoIndex[i*3]*3]));
+		vec3 p1(&(vaoVerts[vaoIndex[i*3+1]*3]));
+		vec3 p2(&(vaoVerts[vaoIndex[i*3+2]*3]));
+		Triangle triangle(p0,p1,p2);
+
 		if ( frustum->ContainsTriangle(&triangle) != Out )
 		{
 			idx.push_back(i);

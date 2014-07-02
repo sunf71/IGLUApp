@@ -1,6 +1,6 @@
 # Setup a camera to view the scene
 camera pinhole
-     eye 0 0 11
+     eye -5 0 0
    	 up 0 1 0
      at 0 0 0
 	  fovy 60
@@ -21,11 +21,12 @@ light point
 end
 
 object mesh obj plane
-		file ../../CommonSampleFiles/models/testbox.obj		
+		file ../../CommonSampleFiles/models/cow.obj
+		unitize true		
 end
 
 object mesh obj cow
-		file ../../CommonSampleFiles/models/plane.obj	
+		file ../../CommonSampleFiles/models/sphere4900.obj	
 		material mirror	
 end
 

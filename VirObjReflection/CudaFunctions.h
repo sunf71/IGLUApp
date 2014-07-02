@@ -17,6 +17,8 @@ namespace cuda
 	//创建虚视锥
 	void GenVirtualFrustums(iglu::vec3& eye, float farD, iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t size);
 
-	//创建虚视锥并裁剪
-	void VirtualFrustumCulling(size_t triSize,iglu::vec3& eye, float farD, iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t objSize);
+	//创建虚视锥并裁剪,返回在虚视锥内的总三角形数
+	size_t VirtualFrustumCulling(size_t triSize,iglu::vec3& eye, float farD, iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t objSize, const unsigned int* inElemBuffer, unsigned int* outElemBuffer);
+
+	void UpdateVirtualObject(unsigned* inPtr, unsigned* outPtr, unsigned size);
 }

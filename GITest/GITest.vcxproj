@@ -115,6 +115,7 @@
     <None Include="..\CommonSampleFiles\scenes\cornell.txt" />
     <None Include="..\CommonSampleFiles\scenes\nature.txt" />
     <None Include="..\CommonSampleFiles\scenes\sponza.txt" />
+    <None Include="..\CommonSampleFiles\scenes\virObjRef.txt" />
     <None Include="..\CommonSampleFiles\scenes\virtualFrustum.txt" />
     <None Include="..\CommonSampleFiles\shaders\cull.gs" />
     <None Include="..\CommonSampleFiles\shaders\cull.vs" />
