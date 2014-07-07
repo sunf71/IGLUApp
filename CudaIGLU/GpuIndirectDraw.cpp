@@ -198,11 +198,7 @@ namespace OGL
 		_drawIndexBuffer->SetBufferData(NUM_DRAWS * sizeof(GLuint),draw_index,IGLU_STATIC|IGLU_DRAW);
 		delete[] draw_index;
 		
-		_drawIndexBuffer->Bind();
 		
-		glVertexAttribIPointer(10, 1, GL_UNSIGNED_INT, 0, NULL);
-		glVertexAttribDivisor(10, 1);
-		glEnableVertexAttribArray(10);
 
 
 		_objReaders[0]->GetVertexArray()->GetVertexBuffer()->Bind();
@@ -222,6 +218,13 @@ namespace OGL
 		glVertexAttribPointer( 3, 1, GL_FLOAT, false, 10*sizeof(float), (char *)NULL + (0) );
 		glEnableVertexAttribArray( 4 );
 		glVertexAttribPointer( 4, 1, GL_FLOAT, false, 10*sizeof(float), (char *)NULL + (4) );
+
+
+		_drawIndexBuffer->Bind();
+		
+		glVertexAttribIPointer(10, 1, GL_UNSIGNED_INT, 0, NULL);
+		glVertexAttribDivisor(10, 1);
+		glEnableVertexAttribArray(10);
 	}
 	void GpuIndirectDrawApp::InitShaders()
 	{

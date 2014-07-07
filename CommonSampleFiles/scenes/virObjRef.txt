@@ -21,12 +21,12 @@ light point
 end
 
 object mesh obj plane
-		file ../../CommonSampleFiles/models/sponza.obj
+		file ../../CommonSampleFiles/models/bunny-8702.obj
 		unitize true		
 end
 
 object mesh obj cow
-		file ../../CommonSampleFiles/models/sphere4900.obj	
+		file ../../CommonSampleFiles/models/sphere180.obj	
 		material mirror	
 end
 

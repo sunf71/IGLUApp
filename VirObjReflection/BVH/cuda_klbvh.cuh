@@ -1,4 +1,4 @@
-
+#pragma once
 struct cullingContext
 {
 	__host__ __device__ cullingContext()
@@ -43,3 +43,17 @@ struct is_frustum
 		return c.id == uint32(-1);
 	}
 };
+
+__device__  __host__ inline nih::Vector3f MatrixXVector3f(const float* mat, nih::Vector3f& vec)
+{
+		float* d= &vec[0];
+		float tmp[4];
+		tmp[0] = mat[0]*d[0] + mat[4]*d[1] + mat[8]*d[2] + mat[12];
+		tmp[1] = mat[1]*d[0] + mat[5]*d[1] + mat[9]*d[2] + mat[13];
+		tmp[2] = mat[2]*d[0] + mat[6]*d[1] + mat[10]*d[2] + mat[14];
+		tmp[3] = mat[3]*d[0] + mat[7]*d[1] + mat[11]*d[2] + mat[15];
+
+		Vector3f ret( tmp );
+		ret /= tmp[3];
+		return ret;
+	}

@@ -66,6 +66,21 @@ __global__ void GenerateVirFrustumKernel(Vector3f* eye,Vector3f* p123, TriFrustu
 	}
 }
 
+__global__ void GenerateVirtualFrustumKernel(Vector3f* eye,Vector3f* p123, uint32* marixId, float* matrix,TriFrustum* frustums, float farD, int count)
+	{
+		uint32 step = blockDim.x * gridDim.x;
+		for (int i = blockIdx.x * blockDim.x + threadIdx.x; 
+			i < count; 
+			i += step) 
+		{
+			float* mat = &matrix[16*marixId[i]];
+			Vector3f p0 = MatrixXVector3f(mat,p123[i*3]);
+			Vector3f p1 = MatrixXVector3f(mat,p123[i*3+1]);
+			Vector3f p2 = MatrixXVector3f(mat,p123[i*3+2]);
+			GenerateVirFrustum(i,*eye,p0,p1,p2,farD,frustums[i]);
+			
+		}
+	}
 
 
 bool BboxCompare(const Bbox3f& lbox, const Bbox3f& rbox)

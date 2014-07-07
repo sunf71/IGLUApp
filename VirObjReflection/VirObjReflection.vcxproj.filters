@@ -84,6 +84,108 @@
     <None Include="BVH\cuda_klbvh.cuh">
       <Filter>BVH</Filter>
     </None>
+    <None Include="..\CommonSampleFiles\shaders\cull.gs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\cull.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\gi.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\gi.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\giU.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\giVA.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\indirect.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\indirect.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\mirrorTexture.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\mirrorTexture.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normal.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normal.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normalT.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normalT.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normalU.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\normalU.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\object.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\object.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\simple.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\simple.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.geom.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuilding.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuildingO.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\stencilBuildingO.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\test.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\test.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\testm.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\testm.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\toArray.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\toArray.geom.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\toArray.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\vor.vert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\CommonSampleFiles\shaders\vor.frag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
@@ -98,6 +200,9 @@
     </Filter>
     <Filter Include="BVH">
       <UniqueIdentifier>{1223bbc1-88da-4ba7-82c4-f3b7f9044d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{4788429b-9b2b-494c-a8db-13acedd3f67b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

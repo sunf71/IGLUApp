@@ -22,14 +22,15 @@ namespace OGL
 		{}
 		~VORApp()
 		{
-			safe_delete( _elemBuffer);
-			safe_delete(_vElemBuffer);
+			safe_delete(_attribBuffer);
+			safe_delete(_indirectDrawBuffer);
 			_mirrorObjs.clear();
 			cudaGraphicsUnregisterResource( _resource );
 			cudaGraphicsUnregisterResource(_elemSource);
 		}
 		void InitBuffer();
 		void InitOGLCuda();
+		void InitMirrorData();
 		void InitAttribute();
 		size_t VirtualFrustumsCulling();
 		void UpdateVirtualObject(size_t size);
@@ -39,16 +40,23 @@ namespace OGL
 
 		virtual void Display();
 	private:
-		IGLUBuffer::Ptr _indirectDrawBuffer;
-		IGLUBuffer::Ptr _elemBuffer;
-		IGLUBuffer::Ptr _vElemBuffer;
+		IGLUBuffer::Ptr _indirectDrawBuffer;		
+		IGLUBuffer::Ptr _attribBuffer;
+		IGLUBuffer::Ptr _mirrorBuffer;
+		IGLUTextureBuffer::Ptr _instanceDataTex;
 		std::vector<IGLUOBJReader::Ptr> _mirrorObjs;
 		std::vector<IGLUMatrix4x4> _mirrorTransforms;
+		std::vector<unsigned> _mirrorTransId;
+		//镜面三角形顶点数组，每个顶点用3个浮点型，每个三角形3个顶点
+		std::vector<float> _mirrorPos;
+		//每个instance包含镜面上一点vec4和镜面法线vec4
+		std::vector<float> _instanceData;
 		//三角形总数量
 		size_t _triSize;
 		cudaGraphicsResource *_resource, *_elemSource;
 		IGLUShaderProgram::Ptr _objShader;
 		IGLUShaderProgram::Ptr _simpleShader;
+		
 	};
 }
 

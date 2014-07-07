@@ -18,7 +18,17 @@ namespace cuda
 	void GenVirtualFrustums(iglu::vec3& eye, float farD, iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t size);
 
 	//创建虚视锥并裁剪,返回在虚视锥内的总三角形数
-	size_t VirtualFrustumCulling(size_t triSize,iglu::vec3& eye, float farD, iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t objSize, const unsigned int* inElemBuffer, unsigned int* outElemBuffer);
+	size_t VirtualFrustumCulling(size_t triSize,iglu::vec3& eye, float farD, float* mirrorPos, iglu::IGLUMatrix4x4::Ptr* mirroTrans, iglu::IGLUMatrix4x4::Ptr matrixes, size_t mirrorTriSize);
+	//创建虚视锥并裁剪,返回在虚视锥内的总三角形数
+	//@triSize 需要裁剪的三角形总数
+	//@mirrorSize 镜面模型总数
+	//@eye 视点
+	//@farD 远裁剪面
+	//@mirrorPos 镜面位置数组，每个镜面是一个三角形，每个三角形三个顶点，每个顶点3个浮点数
+	//@mirroMatrixId 镜面矩阵Id数组，每个镜面三角形有一个Id，表示在镜面矩阵中的索引
+	//@matrixes 镜面矩阵，一共mirrorSize个矩阵
+	//@mirrorTriSize 所有镜面的总三角形数
+	size_t VirtualFrustumCulling(size_t triSize, size_t mirrorSize,iglu::vec3& eye, float farD, float* mirrorPos, unsigned* mirroMatrixId, iglu::IGLUMatrix4x4::Ptr matrixes, size_t mirrorTriSize);
 
-	void UpdateVirtualObject(unsigned* inPtr, unsigned* outPtr, unsigned size);
+	void UpdateVirtualObject(float* inPtr, unsigned* outPtr, unsigned size);
 }
