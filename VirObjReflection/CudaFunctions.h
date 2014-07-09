@@ -28,7 +28,19 @@ namespace cuda
 	//@mirroMatrixId 镜面矩阵Id数组，每个镜面三角形有一个Id，表示在镜面矩阵中的索引
 	//@matrixes 镜面矩阵，一共mirrorSize个矩阵
 	//@mirrorTriSize 所有镜面的总三角形数
-	size_t VirtualFrustumCulling(size_t triSize, size_t mirrorSize,iglu::vec3& eye, float farD, float* mirrorPos, unsigned* mirroMatrixId, iglu::IGLUMatrix4x4::Ptr matrixes, size_t mirrorTriSize);
+	//@mEleInPtr 镜面element
+	//@mEleOutPtr 更新的镜面element
+	size_t VirtualFrustumCulling(size_t triSize, size_t mirrorSize,
+		iglu::vec3& eye, float farD, float* mirrorPos, 
+		unsigned* mirroMatrixId, iglu::IGLUMatrix4x4::Ptr matrixes, size_t& mirrorTriSize,
+		const unsigned* mEleInPtr, unsigned * mEleOutPtr);
 
-	void UpdateVirtualObject(float* inPtr, unsigned* outPtr, unsigned size);
+	//@vAttrPtr 虚顶点属性
+	//@vCmdPtr 虚顶点绘制命令
+	//@mElePtr 镜面索引
+	//@elePtr 更新镜面索引
+	void UpdateVirtualObject(float* vAttrPtr, unsigned* vCmdPtr,unsigned size);
+
+	//更新镜面列表
+	void UpdateMirrorElement(const unsigned* mirrorIds, const unsigned* mCElePtr, unsigned* mElePtr, unsigned size);
 }

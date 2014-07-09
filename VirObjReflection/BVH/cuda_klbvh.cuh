@@ -5,7 +5,11 @@ struct cullingContext
 	{
 		triId = uint32(-1);
 	}
-
+	__host__ __device__ cullingContext(uint32 f, uint32 t)
+	{
+		frustumId = f;
+		triId = t;
+	}
 	uint32 frustumId;
 	uint32 triId;
 };
@@ -43,7 +47,13 @@ struct is_frustum
 		return c.id == uint32(-1);
 	}
 };
-
+struct is_negtive
+{
+	__host__ __device__ bool operator()(const unsigned& c)
+	{
+		return c == uint32(-1);
+	}
+};
 __device__  __host__ inline nih::Vector3f MatrixXVector3f(const float* mat, nih::Vector3f& vec)
 {
 		float* d= &vec[0];

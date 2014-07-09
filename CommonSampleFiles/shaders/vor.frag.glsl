@@ -19,13 +19,51 @@ flat in int instanceId;
 in vec3 esMirror;
 in vec3 esMirrorNormal;
 
-
+in float discardFlag;//∂•µ„‘⁄æµ◊”±≥√Ê
 out vec4 result;
 
 void main( void )
 {
-	if(instanceId==7)
-		result = vec4(0,0,1,1.0);
-	else
-		result = vec4(1,0,0,1.0);
+	vec2 fragCorrd = vec2((gl_FragCoord.x)/resX,(gl_FragCoord.y)/resY);
+	
+	//float dir = dot(esPosition-esMirror,esMirrorNormal);	
+	vec4 texvalue = texture( stencilTexture, fragCorrd);
+	float id= (texvalue.x+texvalue.y+texvalue.z) - 1.0;	
+	//√…∞Ê≤‚ ‘
+	//float id=texture( stencilTexture, fragCorrd).x-1;	
+
+	if(discardFlag < 0 || abs(id-instanceId)>0.01)
+	{	
+		discard;
+	
+	}
+
+	// Look up data about this particular fragment's material
+	vec4 matlInfo = vec4(1.0);
+	vec4 matlTexIds = vec4(-1.0);
+	int matlIdx     = 4 * int(fragMatlID+0.5);
+	if (matlIdx > 0)
+	{
+		matlInfo   = texelFetch( matlInfoTex, matlIdx+1 );  // Get diffuse color
+		matlTexIds = texelFetch( matlInfoTex, matlIdx+3 );  // Get matl texture IDs
+
+	}
+	
+	// Look up this particular fragments' diffuse texture color
+	vec4 difTexColor = vec4(1.0);
+	if (matlTexIds.y >= 0.0)
+		difTexColor = texture( matlTextures, vec3( fragTexCoord.xy, matlTexIds.y ) );
+
+	// Find:  Where is the light?
+	vec4 esLightPos = view * vec4( lightPos, 1.0 );
+
+	// Compute important vectors
+    vec3 esNorm  =  normalize(esNormal.xyz);
+	vec3 toEye   = -normalize(esPosition.xyz);
+	vec3 toLight =  normalize(esLightPos.xyz-esPosition.xyz);
+	
+	// Compute a simple diffuse shading
+	float NdotL  =  clamp(dot(toEye,esNorm),0,1)+1;
+	result = vec4( NdotL * lightIntensity * lightColor * matlInfo.xyz * difTexColor.xyz, 1.0 );
+	
 }

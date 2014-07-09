@@ -101,7 +101,7 @@ bool VirtualEye(const vec3& eye, const vec3& p1, const vec3& p2, const vec3& p3,
 void VirtualFrustumApp::GenVirtualFrustum()
 {
 	//–È ”µ„
-	vec3 eye(-5,0,0);
+	vec3 eye(0,0,10);
 	vec3 virEye;
 	float far = 150;
 	IGLUOBJReader::Ptr reader = _objReaders[0];
@@ -163,6 +163,8 @@ void VirtualFrustumApp::Display()
 		for(int i=1; i<_objReaders.size(); i++)
 		{
 			CullingObjReader(_tFrustumVec[0],_objReaders[i],idx);
+			if (idx.size() == 0)
+				break;
 			UpdateReader(idx,_objReaders[i]);
 			shader->Enable();
 			shader["vcolor"] = vec4(0,0,1,0);

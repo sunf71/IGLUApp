@@ -83,7 +83,39 @@ namespace nih
 	{
 		return (v[0]*p.a + v[1]*p.b + v[2]*p.c + p.d );
 	}
+	FORCE_INLINE NIH_HOST_DEVICE int Intersect( TriFrustum& f, Vector3f& p1, Vector3f& p2, Vector3f p3 )
+	{
+		int TotalIn = 0;
+		for(int i=0; i<5;i++)
+		{
+			int in = 3;
+			int iPtIn = 1;
+			if( planeDistance(p1,f.planes[i]) > 0)
+			{
+				in--;
+				iPtIn = 0;
+			}
+			if( planeDistance(p2,f.planes[i]) > 0)
+			{
+				in--;
+				iPtIn = 0;
+			}
+			if( planeDistance(p3,f.planes[i]) > 0)
+			{
+				in--;
+				iPtIn = 0;
+			}
+			if (in ==0)
+				return 0;
 
+			TotalIn +=iPtIn;
+		}
+		if(TotalIn == 3)
+			return 1;
+
+		// we must be partly in then otherwise
+		return 2;
+	}
 	FORCE_INLINE NIH_HOST_DEVICE int Intersect( TriFrustum& f, float*ptr )
 	{
 

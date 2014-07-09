@@ -25,14 +25,15 @@ namespace OGL
 			safe_delete(_attribBuffer);
 			safe_delete(_indirectDrawBuffer);
 			_mirrorObjs.clear();
-			cudaGraphicsUnregisterResource( _resource );
-			cudaGraphicsUnregisterResource(_elemSource);
+			cudaGraphicsUnregisterResource( _attriRes );
+			cudaGraphicsUnregisterResource(_cmdRes);
 		}
 		void InitBuffer();
 		void InitOGLCuda();
 		void InitMirrorData();
 		void InitAttribute();
-		size_t VirtualFrustumsCulling();
+		size_t VirtualFrustumsCulling(size_t& frustumSize);
+		size_t CPUVirtualFrustumsCulling(size_t& frustumSize);
 		void UpdateVirtualObject(size_t size);
 		virtual void InitScene();
 
@@ -40,9 +41,14 @@ namespace OGL
 
 		virtual void Display();
 	private:
+		//虚物体绘制命令
 		IGLUBuffer::Ptr _indirectDrawBuffer;		
+		//虚物体镜面编号属性
 		IGLUBuffer::Ptr _attribBuffer;
+		//镜面顶点和法线数据
 		IGLUBuffer::Ptr _mirrorBuffer;
+		//镜面索引列表
+		IGLUBuffer::Ptr _mirrorElementBuffer;
 		IGLUTextureBuffer::Ptr _instanceDataTex;
 		std::vector<IGLUOBJReader::Ptr> _mirrorObjs;
 		std::vector<IGLUMatrix4x4> _mirrorTransforms;
@@ -51,12 +57,15 @@ namespace OGL
 		std::vector<float> _mirrorPos;
 		//每个instance包含镜面上一点vec4和镜面法线vec4
 		std::vector<float> _instanceData;
-		//三角形总数量
+		//非镜面三角形总数量
 		size_t _triSize;
-		cudaGraphicsResource *_resource, *_elemSource;
+		cudaGraphicsResource *_attriRes, *_cmdRes, *_mCEleRes, *_mEleRes;
 		IGLUShaderProgram::Ptr _objShader;
 		IGLUShaderProgram::Ptr _simpleShader;
-		
+		IGLUShaderProgram::Ptr _mirrorTexShader;
+
+		IGLUFramebuffer::Ptr _mirrorStencilFBO;
+		IGLUFramebuffer::Ptr _mirrorFBO;
 	};
 }
 

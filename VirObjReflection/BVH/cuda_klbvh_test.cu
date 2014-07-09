@@ -26,7 +26,7 @@ NIH_DEVICE bool AABBOverlap(Bbox3f& boxA, Bbox3f& boxB)
 }
 
 
-void NIH_HOST_DEVICE GenerateVirFrustum(uint32 id, const Vector3f& eye,const Vector3f& p1,const Vector3f& p2, const Vector3f& p3, float farD, TriFrustum& frustum)
+bool NIH_HOST_DEVICE GenerateVirFrustum(uint32 id, const Vector3f& eye,const Vector3f& p1,const Vector3f& p2, const Vector3f& p3, float farD, TriFrustum& frustum)
 {
 	     //求5个平面方程
 		//视锥平面法线指向视锥外
@@ -35,7 +35,7 @@ void NIH_HOST_DEVICE GenerateVirFrustum(uint32 id, const Vector3f& eye,const Vec
 		float d  = pTri.distance(eye);
 		//视点不能位于三角形平面法线那一侧
 		if (d<= 0)
-			return;
+			return false;
 
 		//求虚视点
 		Vector3f fNormal(pTri.a,pTri.b,pTri.c);
@@ -51,6 +51,7 @@ void NIH_HOST_DEVICE GenerateVirFrustum(uint32 id, const Vector3f& eye,const Vec
 		Vector3f c = (p1+p2+p3)*1.f/3.f;
 		float cosT = d/euclidean_distance(vEye,c);
 		frustum.planes[4].d -= farD/cosT;		
+		return true;
 }
 
 //虚视锥生成kernel
@@ -66,7 +67,7 @@ __global__ void GenerateVirFrustumKernel(Vector3f* eye,Vector3f* p123, TriFrustu
 	}
 }
 
-__global__ void GenerateVirtualFrustumKernel(Vector3f* eye,Vector3f* p123, uint32* marixId, float* matrix,TriFrustum* frustums, float farD, int count)
+__global__ void GenerateVirtualFrustumKernel(Vector3f* eye,Vector3f* p123, uint32* marixId, float* matrix,TriFrustum* frustums,unsigned* Ids, float farD, int count)
 	{
 		uint32 step = blockDim.x * gridDim.x;
 		for (int i = blockIdx.x * blockDim.x + threadIdx.x; 
@@ -77,8 +78,10 @@ __global__ void GenerateVirtualFrustumKernel(Vector3f* eye,Vector3f* p123, uint3
 			Vector3f p0 = MatrixXVector3f(mat,p123[i*3]);
 			Vector3f p1 = MatrixXVector3f(mat,p123[i*3+1]);
 			Vector3f p2 = MatrixXVector3f(mat,p123[i*3+2]);
-			GenerateVirFrustum(i,*eye,p0,p1,p2,farD,frustums[i]);
-			
+			if (GenerateVirFrustum(i,*eye,p0,p1,p2,farD,frustums[i]))
+				Ids[i] = i;
+			else
+				Ids[i] = unsigned(-1);
 		}
 	}
 

@@ -20,7 +20,7 @@ out float fragMatlID;
 out vec3 esMirror;
 out vec3 esMirrorNormal;
 flat out int instanceId;
-
+out float discardFlag;//顶点在镜子背面
 //计算反射虚顶点，xyz是位置，w是discard标志
 vec3 Reflection(vec3 fPoint, vec3 fNormal, vec3 inPoint )
 {	
@@ -64,8 +64,10 @@ void main( void )
 	
 	esMirror= fcenter.xyz/fcenter.w;
 	vec3 inpoint = eyePos.xyz/eyePos.w;
-	
-	vec3 virtualPos = Reflection(esMirror,esMirrorNormal,inpoint);	
+	vec3 virtualPos;
+	float dir = dot(inpoint-esMirror,esMirrorNormal);
+	virtualPos = inpoint.xyz-2.0*dir*esMirrorNormal;
+	discardFlag = dir;
 	
 	gl_Position = project*vec4(virtualPos,1.0);
 }

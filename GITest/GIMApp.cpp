@@ -343,6 +343,7 @@ int GIMApp::UpdateMirrorVAO()
 	_vFrustums.clear();
 	float * mirrorVAO = new float[_instanceDatum.size()*3*7];
 	vector<uint> indices;
+	vector<uint> triId;
 	vector<InstanceData> instances;
 	IGLUMatrix4x4 mv = _camera->GetViewMatrix();
 	IGLUMatrix4x4 normalM = mv.Transpose();
@@ -360,6 +361,7 @@ int GIMApp::UpdateMirrorVAO()
 	    //背面裁剪
 		if((eyePos).Dot(trNormal)>0)
 		{
+			triId.push_back(i);
 			//每个镜面创建虚视锥
 			Frustum frustum;
 			vec3 p1(_VAOBuffer+i*21);
@@ -652,6 +654,7 @@ void OGIMApp::Display()
 		_giShader["resX"] = _camera->GetResX();
 		_giShader["resY"] = _camera->GetResY();
 		_giShader["stencilTexture"] = _mirrorStencilFBO[0];
+
 		/*int uniformBlkIdx = glGetUniformBlockIndex( _giShader->GetProgramID(), "InstanceData" );
 		 glBindBufferBase( GL_UNIFORM_BUFFER, uniformBlkIdx, _mirrorUB->GetBufferID() );*/
 		for(int i=0; i<_objReaders.size(); i++)
@@ -677,8 +680,8 @@ void OGIMApp::Display()
 		}
 		_giShader->Disable();
 		_mirrorFBO->Unbind();
-  //  	IGLUDraw::Fullscreen( _mirrorFBO[IGLU_COLOR0], 0 );
-		//return;
+    	IGLUDraw::Fullscreen( _mirrorFBO[IGLU_COLOR0], 0 );
+		return;
 #ifdef DEBUG
 		printf("GI　Drawing GPU:%f  CPU: %f\n", _gpuTimer->Tick(), _cpuTimer->Tick());
 #endif

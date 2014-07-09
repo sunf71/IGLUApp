@@ -38,7 +38,7 @@ void main( void )
 	
 	}
 
-	//镜面在顶点前面
+	////镜面在顶点前面
 	if (discardFlag < 0)
 		discard;
 
