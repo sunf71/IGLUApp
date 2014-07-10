@@ -40,6 +40,14 @@ struct is_valid
 		return c.triId != invalid;
 	}
 };
+struct is_inValid
+{
+	static const  uint32 invalid = uint32(-1);
+	__host__ __device__ bool operator()(const cullingContext& c)
+	{
+		return c.triId == invalid;
+	}
+};
 struct is_frustum
 {
 	__host__ __device__ bool operator()(const TriFrustum& c)

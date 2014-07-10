@@ -251,7 +251,10 @@ void GIMApp::InitScene()
 				//GLMmodel* model = glmReadOBJ(mesh->getObjFileName().c_str());
 				IGLUOBJReader::Ptr objReader;
 				
-				objReader = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(), IGLU_OBJ_UNITIZE);
+				int params = mesh->getCompactFlag() ? IGLU_OBJ_COMPACT_STORAGE : 0;					
+				params |=mesh->getUnitizeFlag() ?  IGLU_OBJ_UNITIZE : 0;
+				objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(), params);
+				
 		
 				
 				//IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( model,IGLU_OBJ_COMPACT_STORAGE);
@@ -340,7 +343,7 @@ void GIMApp::UpdateReader( vector<int>& idxs, IGLUOBJReader::Ptr &reader)
 }
 int GIMApp::UpdateMirrorVAO()
 {
-	_vFrustums.clear();
+	//_vFrustums.clear();
 	float * mirrorVAO = new float[_instanceDatum.size()*3*7];
 	vector<uint> indices;
 	vector<uint> triId;
@@ -363,12 +366,12 @@ int GIMApp::UpdateMirrorVAO()
 		{
 			triId.push_back(i);
 			//每个镜面创建虚视锥
-			Frustum frustum;
+			/*Frustum frustum;
 			vec3 p1(_VAOBuffer+i*21);
 			vec3 p2(_VAOBuffer+i*21+7);
 			vec3 p3(_VAOBuffer+i*21+14);
 			CreateVirtualFrustum(p1,p2,p3,frustum);
-			_vFrustums.push_back(frustum);
+			_vFrustums.push_back(frustum);*/
 
 			//创建新的vao
 			memcpy(mirrorVAO+k*21,_VAOBuffer+i*21,sizeof(float)*21);
@@ -680,8 +683,8 @@ void OGIMApp::Display()
 		}
 		_giShader->Disable();
 		_mirrorFBO->Unbind();
-    	IGLUDraw::Fullscreen( _mirrorFBO[IGLU_COLOR0], 0 );
-		return;
+    /*	IGLUDraw::Fullscreen( _mirrorFBO[IGLU_COLOR0], 0 );
+		return;*/
 #ifdef DEBUG
 		printf("GI　Drawing GPU:%f  CPU: %f\n", _gpuTimer->Tick(), _cpuTimer->Tick());
 #endif
@@ -797,8 +800,10 @@ void OGIMApp::InitScene()
 				ObjModelObject* mesh = (ObjModelObject*)obj;
 				//GLMmodel* model = glmReadOBJ(mesh->getObjFileName().c_str());
 				IGLUOBJReader::Ptr objReader;
+				int params = mesh->getCompactFlag() ? IGLU_OBJ_COMPACT_STORAGE : 0;					
+				params |=mesh->getUnitizeFlag() ?  IGLU_OBJ_UNITIZE : 0;
+				objReader  = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(), params);
 				
-				objReader = new IGLUOBJReader( (char*)mesh->getObjFileName().c_str(), IGLU_OBJ_UNITIZE);
 		
 				
 				//IGLUOBJReader::Ptr objReader  = new IGLUOBJReader( model,IGLU_OBJ_COMPACT_STORAGE);

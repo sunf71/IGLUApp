@@ -5,6 +5,7 @@
 #include "BVH\cuda_klbvh.cuh"
 #include <iostream>
 #include <fstream>
+#include "BVH/GpuTimer.cuh"
 texture<uint32> bvhTex;
 //创建BVH时排序后的图元序列
 texture<uint32> indexTex;
@@ -310,6 +311,8 @@ namespace cuda
 	size_t BuildBvh(iglu::IGLUOBJReader::Ptr* objs, iglu::IGLUMatrix4x4::Ptr matrixes, size_t objSize)
 	{
 		using namespace nih;
+		GpuTimer timer;
+		
 		uint32 size = 0;
 		uint32 *offsets = new uint32[objSize+1];
 
@@ -333,7 +336,7 @@ namespace cuda
 			LoadOBJReader(objs[i],matrixes+i,d_points,d_centers,d_boxes);
 		}
 		delete[] offsets;
-		/*thrust::host_vector<Vector3f> h_points(d_centersVec);
+	/*	thrust::host_vector<Vector3f> h_points(d_centersVec);
 		for(int i=0; i<h_points.size(); i++)
 		std::cout<<h_points[i][0]<<","<<h_points[i][1]<<","<<h_points[i][2]<<std::endl;
 		h_points = (d_pointsVec);
@@ -358,9 +361,11 @@ namespace cuda
 		thrust::device_vector<Bvh_Node> leaves(size);
 		cub::CachingDeviceAllocator allocator(true);
 		KBvh_Builder builder(nodes,leaves,allocator);
+		timer.Start();
 		cuda::DBVH h_bvh;
 		builder.build(h_gBox,d_centersVec.begin(),d_centersVec.end(),d_boxesVec.begin(),d_boxesVec.end(),&h_bvh);
-
+		timer.Stop();
+		timer.Report("Building bvh");
 		thrust::host_vector<Bvh_Node> h_nodes(nodes);
 		thrust::host_vector<Bvh_Node> h_leaves(leaves);	
 		thrust::host_vector<Bbox3f> h_nodeBoxes(size-1);
@@ -418,6 +423,8 @@ namespace cuda
 		cudaMalloc((void**)&gd_indices,sizeof(uint32)*size);
 		cudaMemcpy(gd_indices,builder.getIndices(),sizeof(uint32)*size,cudaMemcpyDeviceToDevice);
 		cudaBindTexture(NULL,indexTex,gd_indices,sizeof(uint32)*size);
+
+	
 		return size;
 	}
 	size_t VirtualFrustumCulling(size_t triSize, size_t mirrorSize,iglu::vec3& eye, float farD, float* mirrorPos, unsigned* mirroMatrixId, iglu::IGLUMatrix4x4::Ptr matrixes, size_t& mirrorTriSize,const unsigned* mEleInPtr, unsigned * mEleOutPtr)
@@ -432,19 +439,23 @@ namespace cuda
 		
 		thrust::device_vector<Vector3f> d_pointsVec(mirrorTriSize*3);
 		thrust::device_vector<TriFrustum> d_frustumVec(mirrorTriSize);
+		Vector3f* d_p123 = thrust::raw_pointer_cast(&d_pointsVec.front());
 		
-		thrust::host_vector<Vector3f> h_pointsVec(mirrorTriSize*3);
-		for(int i =0; i<mirrorTriSize*3;i++)
-		{
-			h_pointsVec[i] = Vector3f(mirrorPos+3*i);
-			//std::cout<<h_pointsVec[i][0]<<","<<h_pointsVec[i][1]<<","<<h_pointsVec[i][2]<<std::endl;
-		}
-		d_pointsVec = h_pointsVec;
+		cudaMemcpy(thrust::raw_pointer_cast(&d_pointsVec.front()),mirrorPos,sizeof(float)*mirrorTriSize*9,cudaMemcpyHostToDevice);
+		//thrust::host_vector<Vector3f> h_pointsVec(mirrorTriSize*3);
+		//h_pointsVec = d_pointsVec;
+		//std::cout<<h_pointsVec[0][0]<<","<<h_pointsVec[0][1]<<","<<h_pointsVec[0][2]<<std::endl;
+		//for(int i =0; i<mirrorTriSize*3;i++)
+		//{
+		//	//h_pointsVec[i] = Vector3f(mirrorPos+3*i);
+		//	std::cout<<h_pointsVec[i][0]<<","<<h_pointsVec[i][1]<<","<<h_pointsVec[i][2]<<std::endl;
+		//}
+		
 		
 
 		
 		size_t n_blocks = GridSize(mirrorTriSize);
-		Vector3f* d_p123 = thrust::raw_pointer_cast(&d_pointsVec.front());
+		
 		TriFrustum* d_frustums = thrust::raw_pointer_cast(&d_frustumVec.front());
 		float* h_matrix = new float[16*mirrorSize];
 		for(int i =0; i<mirrorSize; i++)
@@ -465,11 +476,11 @@ namespace cuda
 		d_frustumVec.resize(values_end - d_frustumVec.begin());
 		thrust::device_vector<unsigned>::iterator values_endPtr = thrust::remove_if(d_mirrorIdVec.begin(),d_mirrorIdVec.end(),is_negtive());
 		d_mirrorIdVec.resize(values_endPtr-d_mirrorIdVec.begin());
-		thrust::host_vector<unsigned> h_mirrorId(d_mirrorIdVec);
-	/*	std::cout<<"mirror ID:"<<std::endl;
+		/*thrust::host_vector<unsigned> h_mirrorId(d_mirrorIdVec);
+		std::cout<<"mirror ID:"<<std::endl;
 		for(int i=0; i<h_mirrorId.size(); i++)
-			std::cout<<h_mirrorId[i]<<std::endl;*/
-		/*thrust::host_vector<cullingContext> h_fakeResult(d_mirrorIdVec.size()*10);
+			std::cout<<h_mirrorId[i]<<std::endl;
+		thrust::host_vector<cullingContext> h_fakeResult(d_mirrorIdVec.size()*10);
 		for(int i=0; i<h_fakeResult.size()/10; i++)
 		{
 			for(int j=0; j<10; j++)
@@ -510,16 +521,14 @@ namespace cuda
 		n_blocks = GridSize(frustumSize);
 		TriFrustum* d_tfrustumPtr = thrust::raw_pointer_cast(&d_frustumVec.front());
 		FrustumCullingKernel<<<n_blocks,128>>>(d_tfrustumPtr,d_frustumVec.size(), triSize,d_list);
-
-		size_t inCount = thrust::count_if(thrust::device,d_vectorf.begin(),d_vectorf.end(),is_valid());		
-		thrust::device_vector<cullingContext>fresult(inCount);
-		
-		thrust::copy_if(d_vectorf.begin(),d_vectorf.end(),fresult.begin(),is_valid());
+		thrust::device_vector<cullingContext>::iterator c_end = thrust::remove_if(d_vectorf.begin(),d_vectorf.end(),is_inValid());
+		int inCount = c_end - d_vectorf.begin() ;
+		d_vectorf.resize(inCount);
 
 		//
 		cudaMalloc((void**)&cullingResult,sizeof(cullingContext)*inCount);
-		cudaMemcpy(cullingResult,thrust::raw_pointer_cast(&fresult.front()),sizeof(uint32)*inCount*2,cudaMemcpyDeviceToDevice);
-		cudaBindTexture(NULL,virObjTex,cullingResult,sizeof(cullingContext)*fresult.size());
+		cudaMemcpy(cullingResult,thrust::raw_pointer_cast(&d_vectorf.front()),sizeof(cullingContext)*inCount,cudaMemcpyDeviceToDevice);
+		cudaBindTexture(NULL,virObjTex,cullingResult,sizeof(cullingContext)*inCount);
 		/*cudaMalloc((void**)&cullingResult,sizeof(cullingContext)*h_fakeResult.size());
 		cudaMemcpy(cullingResult,thrust::raw_pointer_cast(&h_fakeResult.front()),sizeof(uint32)*h_fakeResult.size()*2,cudaMemcpyHostToDevice);
 		cudaBindTexture(NULL,virObjTex,cullingResult,sizeof(cullingContext)*h_fakeResult.size());*/
@@ -543,7 +552,7 @@ namespace cuda
 		cudaFree(d_matrixId);
 		delete[] h_matrix;
 		//return h_fakeResult.size();
-		return fresult.size();
+		return inCount;
 	}
 	void UpdateVirtualObject(float* vAttrPtr, unsigned* vCmdPtr, unsigned size)
 	{

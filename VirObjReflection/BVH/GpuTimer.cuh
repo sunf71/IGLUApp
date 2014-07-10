@@ -1,5 +1,6 @@
 #pragma once
 #include <cuda_runtime.h>
+#include <iostream>
 struct GpuTimer
 {
     cudaEvent_t start;
@@ -34,4 +35,9 @@ struct GpuTimer
         cudaEventElapsedTime(&elapsed, start, stop);
         return elapsed;
     }
+
+	void Report(const char* msg)
+	{
+		std::cout<<msg<<" "<<ElapsedMillis()<<" ms"<<std::endl;
+	}
 };

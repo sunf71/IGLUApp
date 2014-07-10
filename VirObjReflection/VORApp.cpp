@@ -174,7 +174,7 @@ const size_t MaxELEMENT = 1024*1024*3;
 	}
 	size_t VORApp::VirtualFrustumsCulling(size_t& mirrorTrisize)
 	{
-		//vec3 eye = GetCamera()->GetEye();
+		
 		vec3 eye = GetCamera()->GetEyePos();
 		//vec3 eye(-5,0,0);
 		
@@ -403,6 +403,7 @@ const size_t MaxELEMENT = 1024*1024*3;
 	void VORApp::Display()
 	{
 		
+		_mirrorTransforms[0] *= IGLUMatrix4x4::Rotate(10,vec3(0,1,0));
 		// Start timing this frame draw
 		_frameRate->StartFrame();
 		// Clear the screen
@@ -427,39 +428,23 @@ const size_t MaxELEMENT = 1024*1024*3;
 			//_mirrorObjs[0]->GetVertexArray()->GetElementArray()->Unbind();
 			_mirrorElementBuffer->Unbind();
 			_mirrorObjs[0]->GetVertexArray()->Unbind();
-
 			_shaders[3]->Disable();
 			_mirrorStencilFBO->Unbind();
 		/*	IGLUDraw::Fullscreen( _mirrorStencilFBO[IGLU_COLOR0], 0 );
-			return;*/
-		
+			return;		*/
 		}
 	
 		_mirrorFBO->Bind();
 		_mirrorFBO->Clear();
-		glEnable(GL_DEPTH_TEST);
-	
+		glEnable(GL_DEPTH_TEST);	
+		glEnable(GL_CULL_FACE);
 		for(int i=0; i<_objReaders.size(); i++)
 		{
-
-			/*_shaders[0]->Enable();
-			_shaders[0]["project"]         = _camera->GetProjectionMatrix();
-			_shaders[0]["model"]           = _objTransforms[i];
-			_shaders[0]["view"]            = _camera->GetViewMatrix();
-			_shaders[0]["lightIntensity" ] = float(1);
-			_shaders[0]["matlInfoTex"]     = IGLUOBJMaterialReader::s_matlCoefBuf;
-			_shaders[0]["matlTextures"]    = IGLUOBJMaterialReader::s_matlTexArray;			
-			_shaders[0]["lightColor"] = _lightColor;	*/
-			//_objReaders[i]->Draw(_shaders[0]);
-
-			//_shaders[1]->Enable();
-			//_shaders[1]["vcolor"] = vec4(0,0,1,0);
-			//_shaders[1]["mvp"] = _camera->GetProjectionMatrix()*_camera->GetViewMatrix()*_objTransforms[i];
 			_shaders[2]->Enable();
 			_shaders[2]["project"] = _camera->GetProjectionMatrix();	
 			_shaders[2]["view"] = _camera->GetViewMatrix();
 			_shaders[2]["model"]  = _objTransforms[i];
-			_shaders[2]["mirrorModel"] = _objTransforms[i];
+			_shaders[2]["mirrorModel"] = _mirrorTransforms[0];
 			_shaders[2]["InstanceData"] = _instanceDataTex;
 			_shaders[2]["lightIntensity" ] = float(1);
 			_shaders[2]["matlInfoTex"]     = IGLUOBJMaterialReader::s_matlCoefBuf;
@@ -475,19 +460,15 @@ const size_t MaxELEMENT = 1024*1024*3;
 			glMultiDrawElementsIndirect(	GL_TRIANGLES, 	GL_UNSIGNED_INT, 	NULL, 	size, 	0);
 			_indirectDrawBuffer->Unbind();
 			vao->GetElementArray()->Unbind();
-			vao->Unbind();
-			/*_shaders[0]->Disable();*/
-			_shaders[2]->Disable();
-			//_shaders[1]->Disable();
+			vao->Unbind();			
+			_shaders[2]->Disable();			
 		}
 		_mirrorFBO->Unbind();
-
+	/*	IGLUDraw::Fullscreen( _mirrorFBO[IGLU_COLOR0], 0 );
+		return;*/
 		_mirrorTexShader->Enable();
 		_mirrorTexShader["project"]         = _camera->GetProjectionMatrix();
-		_mirrorTexShader["modelview"]            = _camera->GetViewMatrix() *_mirrorTransforms[0];
-		//_mirrorTexShader["lightIntensity" ] = float(1);
-		//_mirrorTexShader["lightPos"] = _lightPos;
-		//_mirrorTexShader["lightColor"] = _lightColor;	
+		_mirrorTexShader["modelview"]            = _camera->GetViewMatrix() *_mirrorTransforms[0];		
 		_mirrorTexShader["mtexture"] = _mirrorFBO[0];
 
 		_mirrorObjs[0]->GetVertexArray()->Bind();
@@ -495,6 +476,7 @@ const size_t MaxELEMENT = 1024*1024*3;
 		glDrawElements(GL_TRIANGLES,frustumSize*3,GL_UNSIGNED_INT,0);		
 		_mirrorElementBuffer->Unbind();
 		_mirrorObjs[0]->GetVertexArray()->Unbind();
+
 		_mirrorTexShader->Disable();
 
 		for(int i=0; i<_objReaders.size(); i++)
