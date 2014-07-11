@@ -6,7 +6,7 @@ camera pinhole
 	  fovy 60
 	  near 3
 	  far  2000
-	  res 1024 1024
+	  res 512 512
 	  trackball
 end
 

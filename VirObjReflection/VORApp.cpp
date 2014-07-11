@@ -3,7 +3,7 @@
 #include "bvh/frustum.h"
 namespace OGL
 {
-const size_t MaxELEMENT = 1024*1024*3;
+	const size_t MaxELEMENT = 1024*1024*3;
 	using namespace iglu;
 	void VORApp::InitBuffer()
 	{
@@ -402,7 +402,10 @@ const size_t MaxELEMENT = 1024*1024*3;
 	}
 	void VORApp::Display()
 	{
-		
+#ifdef TEST
+		_cpuTimer->Start();
+		_gpuTimer->Start();
+#endif
 		_mirrorTransforms[0] *= IGLUMatrix4x4::Rotate(10,vec3(0,1,0));
 		// Start timing this frame draw
 		_frameRate->StartFrame();
@@ -412,6 +415,13 @@ const size_t MaxELEMENT = 1024*1024*3;
 		
 		size_t frustumSize = 0;
 		size_t size = VirtualFrustumsCulling(frustumSize);
+
+#ifdef TEST
+		_cpuTimer->Tick();
+		_gpuTimer->Tick();
+		printf("VirtualFrustums Culling gpu: %lf cpu: %lf \n", _gpuTimer->Tick(), _cpuTimer->Tick());
+#endif
+
 		//size_t size = CPUVirtualFrustumsCulling(frustumSize);
 		//draw stencil
 		{

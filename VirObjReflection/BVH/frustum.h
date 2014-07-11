@@ -55,7 +55,7 @@ namespace nih
 	//Tri Frustum
 	typedef struct TriFrustum
 	{
-		TriFrustum()
+		NIH_HOST_DEVICE TriFrustum()
 		{
 			id = uint32(-1);
 		}

@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 #include "BVH/GpuTimer.cuh"
+#include <cub/cub.cuh>
+
 texture<uint32> bvhTex;
 //创建BVH时排序后的图元序列
 texture<uint32> indexTex;
@@ -21,7 +23,13 @@ __global__ void GenerateVirtualFrustumKernel(Vector3f* eye,Vector3f* p123, uint3
 
 namespace cuda
 {
-	
+	struct is_valid_frustum
+	{
+		__forceinline__ __host__ __device__ bool operator()(const TriFrustum& c) const
+		{
+			return c.id != unsigned(-1);
+		}
+	};
 
 	struct bvhTexHelper
 	{
@@ -95,7 +103,6 @@ namespace cuda
 			if (ret == 2)
 			{
 				//相交
-
 				if(helper.isLeaf(RChild))
 				{
 					if (Intersect(frustum,helper.getBbox(RChild)))
@@ -127,13 +134,11 @@ namespace cuda
 			{
 				//in
 				for(int k= helper.getleafStart(idx); k<=helper.getleafEnd(idx);k++)
-				{	
-					
+				{						
 					uint32	pid = tex1Dfetch(indexTex,k);
 					out[offset+pid].frustumId = frustumId;
 					out[offset+pid].triId = pid;
 				}
-
 			}
 		}
 	}
@@ -430,7 +435,10 @@ namespace cuda
 	size_t VirtualFrustumCulling(size_t triSize, size_t mirrorSize,iglu::vec3& eye, float farD, float* mirrorPos, unsigned* mirroMatrixId, iglu::IGLUMatrix4x4::Ptr matrixes, size_t& mirrorTriSize,const unsigned* mEleInPtr, unsigned * mEleOutPtr)
 	{
 		using namespace nih;
-		
+#ifdef TEST
+		GpuTimer timer;
+		timer.Start();
+#endif
 	
 		Vector3f veye(eye.GetConstDataPtr());
 		Vector3f* d_eye = NULL;
@@ -451,9 +459,6 @@ namespace cuda
 		//	std::cout<<h_pointsVec[i][0]<<","<<h_pointsVec[i][1]<<","<<h_pointsVec[i][2]<<std::endl;
 		//}
 		
-		
-
-		
 		size_t n_blocks = GridSize(mirrorTriSize);
 		
 		TriFrustum* d_frustums = thrust::raw_pointer_cast(&d_frustumVec.front());
@@ -471,35 +476,70 @@ namespace cuda
 		unsigned* d_mirrorId = thrust::raw_pointer_cast(&d_mirrorIdVec.front());
 
 		GenerateVirtualFrustumKernel<<<n_blocks,128>>>(d_eye,d_p123,d_matrixId,d_matrix,d_frustums,d_mirrorId,farD ,mirrorTriSize);
-		thrust::device_vector<TriFrustum>::iterator values_end = thrust::remove_if(d_frustumVec.begin(),d_frustumVec.end(),is_frustum());
-		// since the values after values_end are garbage, we'll resize the vector
-		d_frustumVec.resize(values_end - d_frustumVec.begin());
-		thrust::device_vector<unsigned>::iterator values_endPtr = thrust::remove_if(d_mirrorIdVec.begin(),d_mirrorIdVec.end(),is_negtive());
-		d_mirrorIdVec.resize(values_endPtr-d_mirrorIdVec.begin());
-		/*thrust::host_vector<unsigned> h_mirrorId(d_mirrorIdVec);
-		std::cout<<"mirror ID:"<<std::endl;
-		for(int i=0; i<h_mirrorId.size(); i++)
-			std::cout<<h_mirrorId[i]<<std::endl;
-		thrust::host_vector<cullingContext> h_fakeResult(d_mirrorIdVec.size()*10);
-		for(int i=0; i<h_fakeResult.size()/10; i++)
-		{
-			for(int j=0; j<10; j++)
-			{
-				h_fakeResult[i*10+j].frustumId =h_mirrorId[i];
-				h_fakeResult[i*10+j].triId = j;
-			}
-		}*/
-		/*thrust::host_vector<cullingContext> h_fakeResult;
-		for(int i=1; i<h_mirrorId.size(); i++)
-		{
-			for(int j=0; j<10; j++)
-			h_fakeResult.push_back(cullingContext(h_mirrorId[i],j));
-		}*/
+#ifdef TEST
+		timer.Stop();
+		timer.Report("  Generate Virtual Frustum Kernel cuda");		
+#endif
+		//timer.Start();
+		//thrust::device_vector<TriFrustum>::iterator values_end = thrust::remove_if(d_frustumVec.begin(),d_frustumVec.end(),is_not_frustum());
+		//// since the values after values_end are garbage, we'll resize the vector
+		//d_frustumVec.resize(values_end - d_frustumVec.begin());
+		//thrust::device_vector<unsigned>::iterator values_endPtr = thrust::remove_if(d_mirrorIdVec.begin(),d_mirrorIdVec.end(),is_negtive());
+		//d_mirrorIdVec.resize(values_endPtr-d_mirrorIdVec.begin());
+		///*thrust::host_vector<unsigned> h_mirrorId(d_mirrorIdVec);
+		//std::cout<<"mirror ID:"<<std::endl;
+		//for(int i=0; i<h_mirrorId.size(); i++)
+		//	std::cout<<h_mirrorId[i]<<std::endl;
+		//thrust::host_vector<cullingContext> h_fakeResult(d_mirrorIdVec.size()*10);
+		//for(int i=0; i<h_fakeResult.size()/10; i++)
+		//{
+		//	for(int j=0; j<10; j++)
+		//	{
+		//		h_fakeResult[i*10+j].frustumId =h_mirrorId[i];
+		//		h_fakeResult[i*10+j].triId = j;
+		//	}
+		//}*/
+		///*thrust::host_vector<cullingContext> h_fakeResult;
+		//for(int i=1; i<h_mirrorId.size(); i++)
+		//{
+		//	for(int j=0; j<10; j++)
+		//	h_fakeResult.push_back(cullingContext(h_mirrorId[i],j));
+		//}*/
+		//timer.Stop();
+		//timer.Report("  Generate Virtual Frustum Stream Compaction");
 
+#ifdef TEST
+		timer.Start();	
+#endif
+		int      num_items = mirrorTriSize;     
+		TriFrustum      *d_frustumsOut;             
+		cudaMalloc((void**)&d_frustumsOut,sizeof(TriFrustum)*mirrorTriSize);
+		int      *d_num_selected;    
+		cudaMalloc((void**)&d_num_selected,sizeof(int));
+		void     *d_temp_storage = NULL;
+		size_t   temp_storage_bytes = 0;
+		is_frustum op;
+		cub::DeviceSelect::If(d_temp_storage, temp_storage_bytes, d_frustums, d_frustumsOut, d_num_selected, num_items, op);
+		// Allocate temporary storage
+		cudaMalloc(&d_temp_storage, temp_storage_bytes);
+		// Run selection
+		cub::DeviceSelect::If(d_temp_storage, temp_storage_bytes, d_frustums, d_frustumsOut, d_num_selected, num_items,op);
+		int h_num_selected;
+		cudaMemcpy(&h_num_selected,d_num_selected,sizeof(int),cudaMemcpyDeviceToHost);		
+		cudaFree(d_temp_storage);
+#ifdef TEST
+		timer.Stop();
+		timer.Report( "cub Generate Virtual Frustum Stream Compaction");
+#endif
 
-
-
+#ifdef TEST
+		timer.Start();
+#endif
 		UpdateMirrorElement(d_mirrorId,mEleInPtr,mEleOutPtr,d_mirrorIdVec.size());
+#ifdef TEST
+		timer.Stop();
+		timer.Report("    UpdateMirrorElement Kernel cuda");
+#endif
 		mirrorTriSize = d_mirrorIdVec.size();
 		/*unsigned* hEle = new unsigned[d_mirrorIdVec.size()*3];
 		cudaMemcpy(hEle,mEleOutPtr,d_mirrorIdVec.size()*3*sizeof(unsigned),cudaMemcpyDeviceToHost);
@@ -515,20 +555,54 @@ namespace cuda
 		/*h_frustumVec = d_frustumVec;
 		TriFrustum f = h_frustumVec[0];*/
 		//culling 
-		size_t frustumSize = d_frustumVec.size();
-		thrust::device_vector<cullingContext> d_vectorf(triSize * frustumSize);
+#ifdef TEST
+		timer.Start();
+#endif
+		size_t cullingSize = h_num_selected* triSize;
+		thrust::device_vector<cullingContext> d_vectorf(cullingSize);
 		cullingContext* d_list = thrust::raw_pointer_cast(&d_vectorf.front());
-		n_blocks = GridSize(frustumSize);
-		TriFrustum* d_tfrustumPtr = thrust::raw_pointer_cast(&d_frustumVec.front());
-		FrustumCullingKernel<<<n_blocks,128>>>(d_tfrustumPtr,d_frustumVec.size(), triSize,d_list);
+		n_blocks = GridSize(h_num_selected);		
+		FrustumCullingKernel<<<n_blocks,128>>>(d_frustumsOut,h_num_selected, triSize,d_list);
+#ifdef TEST
+		timer.Stop();
+		timer.Report("    Frustum Culling Kernel cuda");
+#endif
+
+		/*timer.Start();
 		thrust::device_vector<cullingContext>::iterator c_end = thrust::remove_if(d_vectorf.begin(),d_vectorf.end(),is_inValid());
 		int inCount = c_end - d_vectorf.begin() ;
 		d_vectorf.resize(inCount);
+		timer.Stop();
+		timer.Report("    Frustum Culling Stream Compaction");*/
 
 		//
-		cudaMalloc((void**)&cullingResult,sizeof(cullingContext)*inCount);
-		cudaMemcpy(cullingResult,thrust::raw_pointer_cast(&d_vectorf.front()),sizeof(cullingContext)*inCount,cudaMemcpyDeviceToDevice);
-		cudaBindTexture(NULL,virObjTex,cullingResult,sizeof(cullingContext)*inCount);
+#ifdef TEST
+		timer.Start();	
+#endif
+		cullingContext * d_cullingOut;	
+		cudaMalloc((void**)&d_cullingOut,sizeof(cullingContext)*cullingSize);			
+		void     *d_temp_storage2 = NULL;
+		size_t   temp_storage_bytes2 = 0;
+		is_valid op2;
+		cub::DeviceSelect::If(d_temp_storage2, temp_storage_bytes2, d_list, d_cullingOut, d_num_selected, cullingSize, op2);
+		// Allocate temporary storage
+		cudaMalloc(&d_temp_storage2, temp_storage_bytes2);
+		//// Run selection
+		cub::DeviceSelect::If(d_temp_storage2, temp_storage_bytes2, d_list, d_cullingOut, d_num_selected, cullingSize,op2);
+		cudaMemcpy(&h_num_selected,d_num_selected,sizeof(int),cudaMemcpyDeviceToHost);
+		cudaFree(d_num_selected);
+		cudaFree(d_temp_storage2);
+#ifdef TEST
+		timer.Stop();
+		timer.Report( "    cub  Frustum Culling Stream Compaction");
+#endif
+	
+#ifdef TEST
+		timer.Start();
+#endif
+		cudaMalloc((void**)&cullingResult,sizeof(cullingContext)*h_num_selected);
+		cudaMemcpy(cullingResult,d_cullingOut,sizeof(cullingContext)*h_num_selected,cudaMemcpyDeviceToDevice);
+		cudaBindTexture(NULL,virObjTex,cullingResult,sizeof(cullingContext)*h_num_selected);
 		/*cudaMalloc((void**)&cullingResult,sizeof(cullingContext)*h_fakeResult.size());
 		cudaMemcpy(cullingResult,thrust::raw_pointer_cast(&h_fakeResult.front()),sizeof(uint32)*h_fakeResult.size()*2,cudaMemcpyHostToDevice);
 		cudaBindTexture(NULL,virObjTex,cullingResult,sizeof(cullingContext)*h_fakeResult.size());*/
@@ -546,13 +620,19 @@ namespace cuda
 		dataFile.close();*/
 		//UpdateElementKernel<<<n_blocks,128>>>(inElemBuffer,outElemBuffer,thrust::raw_pointer_cast(&fresult.front()),fresult.size());
 		cudaFree(d_eye);
+		cudaFree(d_cullingOut);
 		//cudaFree(gd_indices);
 		
 		cudaFree(d_matrix);
 		cudaFree(d_matrixId);
+		cudaFree(d_frustumsOut);
 		delete[] h_matrix;
 		//return h_fakeResult.size();
-		return inCount;
+#ifdef TEST
+		timer.Stop();
+		timer.Report("    memory release cuda");
+#endif
+		return h_num_selected;
 	}
 	void UpdateVirtualObject(float* vAttrPtr, unsigned* vCmdPtr, unsigned size)
 	{

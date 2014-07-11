@@ -348,7 +348,7 @@ int GIMApp::UpdateMirrorVAO()
 	vector<uint> indices;
 	vector<uint> triId;
 	vector<InstanceData> instances;
-	IGLUMatrix4x4 mv = _camera->GetViewMatrix();
+	IGLUMatrix4x4 mv = _camera->GetViewMatrix()*_objTransforms[_mirrorId];
 	IGLUMatrix4x4 normalM = mv.Transpose();
 	glm::mat4 mat = glm::make_mat4(normalM.GetDataPtr());
 	mat = glm::inverse(mat);
@@ -452,7 +452,7 @@ void GIMApp::Display()
 	// Start timing this frame draw
 	_frameRate->StartFrame();
 	
-
+	
 #ifdef _DEBUG
 	_gpuTimer->Start();
 	_cpuTimer->Start();
@@ -599,7 +599,7 @@ void OGIMApp::Display()
 	_frameRate->StartFrame();
 	// Clear the screen
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
+	_objTransforms[_mirrorId] *= IGLUMatrix4x4::Rotate(10,vec3(0,1,0));
 #ifdef DEBUG
 	_gpuTimer->Start();
 	_cpuTimer->Start();

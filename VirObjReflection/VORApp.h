@@ -19,11 +19,16 @@ namespace OGL
 	{
 	public:
 		VORApp(const char* fileName):IGLUApp(fileName)
-		{}
+		{
+			_cpuTimer = new IGLUCPUTimer();
+			_gpuTimer = new IGLUGPUTimer();
+		}
 		~VORApp()
 		{
 			safe_delete(_attribBuffer);
 			safe_delete(_indirectDrawBuffer);
+			safe_delete(_cpuTimer);
+			safe_delete(_gpuTimer);
 			_mirrorObjs.clear();
 			cudaGraphicsUnregisterResource( _attriRes );
 			cudaGraphicsUnregisterResource(_cmdRes);
@@ -66,6 +71,9 @@ namespace OGL
 
 		IGLUFramebuffer::Ptr _mirrorStencilFBO;
 		IGLUFramebuffer::Ptr _mirrorFBO;
+
+		IGLUCPUTimer::Ptr _cpuTimer;
+		IGLUGPUTimer::Ptr _gpuTimer;
 	};
 }
 
