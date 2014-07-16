@@ -50,7 +50,7 @@ bool NIH_HOST_DEVICE GenerateVirFrustum(uint32 id, const Vector3f& eye,const Vec
 		frustum.planes[4] = pTri;
 		Vector3f c = (p1+p2+p3)*1.f/3.f;
 		float cosT = d/euclidean_distance(vEye,c);
-		frustum.planes[4].d -= farD/cosT;		
+		frustum.planes[4].d -= farD*cosT;		
 		return true;
 }
 
