@@ -1,9 +1,9 @@
 #include "VORApp.h"
-#include "CudaFunctions.h"
+
 #include "bvh/frustum.h"
 namespace OGL
 {
-	const size_t MaxELEMENT = 1024*1024*3;
+	const size_t MaxELEMENT = 1024*1024*5;
 	using namespace iglu;
 	void VORApp::InitBuffer()
 	{
@@ -267,6 +267,7 @@ namespace OGL
 		InitBuffer();
 		InitOGLCuda();
 		InitAttribute();
+		cuda::InitGPUMemory(MaxELEMENT);
 	}
 	void InitOBJReaderAttribute(IGLUOBJReader::Ptr reader)
 	{

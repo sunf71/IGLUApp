@@ -5,6 +5,7 @@
 #include "BVH/frustum.h"
 #include "cuda_gl_interop.h"
 #include "cuda_runtime_api.h"
+#include "CudaFunctions.h"
 namespace OGL
 {
 	using namespace iglu;
@@ -32,6 +33,7 @@ namespace OGL
 			_mirrorObjs.clear();
 			cudaGraphicsUnregisterResource( _attriRes );
 			cudaGraphicsUnregisterResource(_cmdRes);
+			cuda::ReleaseGPUMemory();
 		}
 		void InitBuffer();
 		void InitOGLCuda();

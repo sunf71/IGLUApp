@@ -43,4 +43,11 @@ namespace cuda
 
 	//更新镜面列表
 	void UpdateMirrorElement(const unsigned* mirrorIds, const unsigned* mCElePtr, unsigned* mElePtr, unsigned size);
+
+	//初始化GPU内存
+	//@MaxSize 裁剪结果最大数量
+	void InitGPUMemory(size_t MaxSize);
+
+	//释放GPU内存
+	void ReleaseGPUMemory();
 }

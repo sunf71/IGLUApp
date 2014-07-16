@@ -579,16 +579,15 @@ namespace cuda
 #ifdef TEST
 		timer.Start();	
 #endif
-		cullingContext * d_cullingOut;	
-		cudaMalloc((void**)&d_cullingOut,sizeof(cullingContext)*cullingSize);			
+		
 		void     *d_temp_storage2 = NULL;
 		size_t   temp_storage_bytes2 = 0;
 		is_valid op2;
-		cub::DeviceSelect::If(d_temp_storage2, temp_storage_bytes2, d_list, d_cullingOut, d_num_selected, cullingSize, op2);
+		cub::DeviceSelect::If(d_temp_storage2, temp_storage_bytes2, d_list, cullingResult, d_num_selected, cullingSize, op2);
 		// Allocate temporary storage
 		cudaMalloc(&d_temp_storage2, temp_storage_bytes2);
 		//// Run selection
-		cub::DeviceSelect::If(d_temp_storage2, temp_storage_bytes2, d_list, d_cullingOut, d_num_selected, cullingSize,op2);
+		cub::DeviceSelect::If(d_temp_storage2, temp_storage_bytes2, d_list, cullingResult, d_num_selected, cullingSize,op2);
 		cudaMemcpy(&h_num_selected,d_num_selected,sizeof(int),cudaMemcpyDeviceToHost);
 		cudaFree(d_num_selected);
 		cudaFree(d_temp_storage2);
@@ -600,9 +599,7 @@ namespace cuda
 #ifdef TEST
 		timer.Start();
 #endif
-		cudaMalloc((void**)&cullingResult,sizeof(cullingContext)*h_num_selected);
-		cudaMemcpy(cullingResult,d_cullingOut,sizeof(cullingContext)*h_num_selected,cudaMemcpyDeviceToDevice);
-		cudaBindTexture(NULL,virObjTex,cullingResult,sizeof(cullingContext)*h_num_selected);
+		
 		/*cudaMalloc((void**)&cullingResult,sizeof(cullingContext)*h_fakeResult.size());
 		cudaMemcpy(cullingResult,thrust::raw_pointer_cast(&h_fakeResult.front()),sizeof(uint32)*h_fakeResult.size()*2,cudaMemcpyHostToDevice);
 		cudaBindTexture(NULL,virObjTex,cullingResult,sizeof(cullingContext)*h_fakeResult.size());*/
@@ -620,7 +617,7 @@ namespace cuda
 		dataFile.close();*/
 		//UpdateElementKernel<<<n_blocks,128>>>(inElemBuffer,outElemBuffer,thrust::raw_pointer_cast(&fresult.front()),fresult.size());
 		cudaFree(d_eye);
-		cudaFree(d_cullingOut);
+		//cudaFree(d_cullingOut);
 		//cudaFree(gd_indices);
 		
 		cudaFree(d_matrix);
@@ -652,7 +649,7 @@ namespace cuda
 		//	std::cout<<cmdPtr[i]<<","<<cmdPtr[i+1]<<","<<cmdPtr[i+2]<<","<<cmdPtr[i+3]<<","<<cmdPtr[i+4]<<std::endl;
 
 		//}
-		cudaFree(cullingResult);
+		
 	}
 
 	void UpdateMirrorElement(const unsigned* mirrIds,const unsigned* mCElePtr, unsigned* mElePtr, unsigned size)
@@ -705,4 +702,15 @@ namespace cuda
 	//	cudaFree(d_eye);
 	//	delete[] offsets;
 	//}
+
+	void InitGPUMemory(size_t MaxSize)
+	{
+		cudaMalloc(&cullingResult,MaxSize*sizeof(cullingContext));
+		cudaBindTexture(NULL,virObjTex,cullingResult,sizeof(cullingContext)*MaxSize);
+	}
+
+	void ReleaseGPUMemory()
+	{
+		cudaFree(cullingResult);
+	}
 }
